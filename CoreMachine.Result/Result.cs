@@ -41,6 +41,28 @@ public readonly record struct Result<TValue, TError>
     public async Task<TOut> MatchAsync<TOut>(Func<TValue, Task<TOut>> ok, Func<TError, Task<TOut>> err) 
         => IsError ? await err(_error).ConfigureAwait(false) : await ok(_value).ConfigureAwait(false);
     
+    public void Switch(Action<TValue> ok, Action<TError> err)
+    {
+        if (IsError)
+        {
+            err(_error);
+            return;
+        }
+
+        ok(_value);
+    }
+    
+    public async Task SwitchAsync(Func<TValue, Task> ok, Func<TError, Task> err)
+    {
+        if (IsError)
+        {
+            await err(_error);
+            return;
+        }
+
+        await ok(_value);
+    }
+    
     public static implicit operator Result<TValue, TError>(TValue value) => new(value);
     public static implicit operator Result<TValue, TError>(TError error) => new(error);
 }
