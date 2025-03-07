@@ -6,7 +6,7 @@ public readonly record struct Result<TValue, TError>
 {
     private readonly TError? _error;
     private readonly TValue? _value;
-    
+
     [MemberNotNullWhen(true, nameof(_error))]
     [MemberNotNullWhen(false, nameof(_value))]
     private bool IsError { get; }
@@ -17,7 +17,7 @@ public readonly record struct Result<TValue, TError>
         {
             throw new ArgumentNullException(nameof(value));
         }
-        
+
         _value = value;
         _error = default;
         IsError = false;
@@ -29,12 +29,18 @@ public readonly record struct Result<TValue, TError>
         {
             throw new ArgumentNullException(nameof(error));
         }
+
         _error = error;
         _value = default;
         IsError = true;
     }
 
+    public TOut Match<TOut>(Func<TValue, TOut> ok, Func<TError, TOut> err) 
+        => IsError ? err(_error) : ok(_value);
+
+    public async Task<TOut> MatchAsync<TOut>(Func<TValue, Task<TOut>> ok, Func<TError, Task<TOut>> err) 
+        => IsError ? await err(_error).ConfigureAwait(false) : await ok(_value).ConfigureAwait(false);
+    
     public static implicit operator Result<TValue, TError>(TValue value) => new(value);
     public static implicit operator Result<TValue, TError>(TError error) => new(error);
 }
-
