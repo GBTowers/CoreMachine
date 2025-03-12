@@ -11,7 +11,7 @@ public readonly record struct Result<TValue, TError>
     [MemberNotNullWhen(false, nameof(_value))]
     private bool IsError { get; }
 
-    public Result(TValue value)
+    private Result(TValue value)
     {
         if (value is null)
         {
@@ -23,7 +23,7 @@ public readonly record struct Result<TValue, TError>
         IsError = false;
     }
 
-    public Result(TError error)
+    private Result(TError error)
     {
         if (error is null)
         {
