@@ -81,6 +81,15 @@ public readonly record struct Result<TValue, TError>
     public async Task<Result<TNew, TError>> BindAsync<TNew>(Func<TValue, Task<Result<TNew, TError>>> next) 
         => !IsError ? await next(_value).ConfigureAwait(false) : _error;
     
+    public Result<TValue, TError> Assert(Func<TValue, bool> assert, TError error)
+    {
+        if (IsError)
+        {
+            return _error;
+        }
+        
+        return assert(_value) ? _value : error;
+    }
     
     public static implicit operator Result<TValue, TError>(TValue value) => new(value);
     public static implicit operator Result<TValue, TError>(TError error) => new(error);
