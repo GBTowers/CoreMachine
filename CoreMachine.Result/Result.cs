@@ -35,12 +35,12 @@ public readonly record struct Result<TValue, TError>
         IsError = true;
     }
 
-    public TOut Match<TOut>(Func<TValue, TOut> ok, Func<TError, TOut> err) 
+    public TOut Match<TOut>(Func<TValue, TOut> ok, Func<TError, TOut> err)
         => IsError ? err(_error) : ok(_value);
 
-    public async Task<TOut> MatchAsync<TOut>(Func<TValue, Task<TOut>> ok, Func<TError, Task<TOut>> err) 
+    public async Task<TOut> MatchAsync<TOut>(Func<TValue, Task<TOut>> ok, Func<TError, Task<TOut>> err)
         => IsError ? await err(_error).ConfigureAwait(false) : await ok(_value).ConfigureAwait(false);
-    
+
     public void Switch(Action<TValue> ok, Action<TError> err)
     {
         if (IsError)
@@ -51,7 +51,7 @@ public readonly record struct Result<TValue, TError>
 
         ok(_value);
     }
-    
+
     public async Task SwitchAsync(Func<TValue, Task> ok, Func<TError, Task> err)
     {
         if (IsError)
@@ -62,6 +62,25 @@ public readonly record struct Result<TValue, TError>
 
         await ok(_value);
     }
+
+    public Result<TValue, TNew> MapError<TNew>(Func<TError, TNew> next) 
+        => IsError ? next(_error) : _value;
+
+    public async Task<Result<TValue, TNew>> MapErrorAsync<TNew>(Func<TError, Task<TNew>> next) 
+        => IsError ? await next(_error).ConfigureAwait(false) : _value;
+    
+    public Result<TNew, TError> Map<TNew>(Func<TValue, TNew> next) 
+        => !IsError ? next(_value) : _error;
+
+    public async Task<Result<TNew, TError>> MapAsync<TNew>(Func<TValue, Task<TNew>> next)
+        => !IsError ? await next(_value).ConfigureAwait(false) : _error;
+
+    public Result<TNew, TError> Bind<TNew>(Func<TValue, Result<TNew, TError>> next) 
+        => !IsError ? next(_value) : _error; 
+    
+    public async Task<Result<TNew, TError>> BindAsync<TNew>(Func<TValue, Task<Result<TNew, TError>>> next) 
+        => !IsError ? await next(_value).ConfigureAwait(false) : _error;
+    
     
     public static implicit operator Result<TValue, TError>(TValue value) => new(value);
     public static implicit operator Result<TValue, TError>(TError error) => new(error);
