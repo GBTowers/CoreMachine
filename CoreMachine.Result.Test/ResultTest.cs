@@ -7,12 +7,12 @@ public class ResultTest
     {
         Assert.Throws<ArgumentNullException>(() =>
         {
-            var r = Result.Ok<string, string>(null!);
+            _ = Result.Ok<string, string>(null!);
         });
 
         Assert.Throws<ArgumentNullException>(() =>
         {
-            var r = Result.Error<string, string>(null!);
+            _ = Result.Error<string, string>(null!);
         });
     }
 
