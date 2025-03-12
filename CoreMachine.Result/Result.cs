@@ -94,3 +94,9 @@ public readonly record struct Result<TValue, TError>
     public static implicit operator Result<TValue, TError>(TValue value) => new(value);
     public static implicit operator Result<TValue, TError>(TError error) => new(error);
 }
+
+public static class Result
+{
+    public static Result<T, TE> Ok<T, TE>(T value) => value;
+    public static Result<T, TE> Error<T, TE>(TE error) => error;
+}
