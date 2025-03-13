@@ -143,18 +143,67 @@ public record Result<T, TError>
     public async Task<Result<TNew, TError>> MapAsync<TNew>(Func<T, Task<TNew>> next)
         => !IsError ? await next(_value).ConfigureAwait(false) : _error;
 
+    
+    /// <summary>
+    /// Binds another function returning <see cref="Result{T,TError}"/>
+    /// with <see cref="TNew"/> as the new value type.
+    /// The binded function only executes if the <see cref="Result{T,TError}"/>
+    /// state is success, otherwise it returns the current error
+    /// </summary>
+    /// <param name="next">Binded function</param>
+    /// <typeparam name="TNew">The new value type for the <see cref="Result{T,TError}"/></typeparam>
+    /// <returns>A new <see cref="Result{T,TError}"/> with the new value type</returns>
     public Result<TNew, TError> Bind<TNew>(Func<T, Result<TNew, TError>> next) 
         => !IsError ? next(_value) : _error; 
     
+    /// <summary>
+    /// Binds another asynchronous function returning <see cref="Result{T,TError}"/>
+    /// with <see cref="TNew"/> as the new value type.
+    /// The binded asynchronous function only executes if the <see cref="Result{T,TError}"/>
+    /// state is success, otherwise it returns the current error
+    /// </summary>
+    /// <param name="next">Binded asynchronous function</param>
+    /// <typeparam name="TNew">The new value type for the <see cref="Result{T,TError}"/></typeparam>
+    /// <returns>
+    /// A <see cref="Task{TResult}"/> containing a new <see cref="Result{T,TError}"/> with the new value type
+    /// </returns>
     public async Task<Result<TNew, TError>> BindAsync<TNew>(Func<T, Task<Result<TNew, TError>>> next) 
         => !IsError ? await next(_value).ConfigureAwait(false) : _error;
     
+    /// <summary>
+    /// Binds another function returning <see cref="Result{T,TError}"/>
+    /// with <see cref="TNewError"/> as the new error type.
+    /// The binded function only executes if the <see cref="Result{T,TError}"/>
+    /// state is success, otherwise it returns the current error
+    /// </summary>
+    /// <param name="next">Binded function</param>
+    /// <typeparam name="TNewError">The new error type for the <see cref="Result{T,TError}"/></typeparam>
+    /// <returns>A new <see cref="Result{T,TError}"/> with the new error type</returns>
     public Result<T, TNewError> BindError<TNewError>(Func<TError, Result<T, TNewError>> next) 
         => IsError ? next(_error) : _value; 
     
+    /// <summary>
+    /// Binds another asynchronous function returning <see cref="Result{T,TError}"/>
+    /// with <see cref="TNewError"/> as the new error type.
+    /// The binded asynchronous function only executes if the <see cref="Result{T,TError}"/>
+    /// state is success, otherwise it returns the current error
+    /// </summary>
+    /// <param name="next">Binded asynchronous function</param>
+    /// <typeparam name="TNewError">The new error type for the <see cref="Result{T,TError}"/></typeparam>
+    /// <returns>
+    /// A <see cref="Task{TResult}"/> containing a new <see cref="Result{T,TError}"/> with the new error type
+    /// </returns>
     public async Task<Result<T, TNewError>> BindErrorAsync<TNewError>(
         Func<TError, Task<Result<T, TNewError>>> next) 
         => IsError ? await next(_error).ConfigureAwait(false) : _value;
+    
+    /// <summary>
+    /// Executes a given delegate-like function if the <see cref="Result{T,TError}"/> state is success,
+    /// if the result for the <paramref name="assert"/> is false, then it returns a given error.
+    /// </summary>
+    /// <param name="assert">The delegate for the assertion</param>
+    /// <param name="error">The error to return if the assertion is false</param>
+    /// <returns>A new <see cref="Result{T,TError}"/> containing the value or the given error</returns>
     public Result<T, TError> Assert(Func<T, bool> assert, TError error)
     {
         if (IsError)
@@ -171,6 +220,20 @@ public record Result<T, TError>
 
 public static class Result
 {
+    /// <summary>
+    /// Creates a new instance of <see cref="Result{T,TError}"/> with a success state
+    /// </summary>
+    /// <param name="value">The non-null value for the success state</param>
+    /// <typeparam name="T">The value type of the result</typeparam>
+    /// <typeparam name="TError">The error type of the result</typeparam>
+    /// <returns>A new <see cref="Result{T,TError}"/> with the given value</returns>
     public static Result<T, TError> Ok<T, TError>(T value) => value;
+    /// <summary>
+    /// Creates a new instance of <see cref="Result{T,TError}"/> with a failure state
+    /// </summary>
+    /// <param name="error">The non-null error for the failure state</param>
+    /// <typeparam name="T">The value type of the result</typeparam>
+    /// <typeparam name="TError">The error type of the result</typeparam>
+    /// <returns>A new <see cref="Result{T,TError}"/> with the given error</returns>
     public static Result<T, TError> Error<T, TError>(TError error) => error;
 }

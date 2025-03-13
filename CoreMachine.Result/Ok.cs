@@ -4,7 +4,7 @@ public interface IOk<out T>
 {
     public T Value { get; }
 }
-
+/// <inheritdoc cref="Result{T,TError}"/>
 public record Ok<T, TError> : Result<T, TError>, IOk<T>
 {
     public Ok(T value) : base(value)
