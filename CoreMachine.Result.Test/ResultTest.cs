@@ -29,5 +29,10 @@ public class ResultTest
         
         Assert.Equal("before assert", beforeResult);
         Assert.Equal("after assert", afterResult);
+
+        var result = Result.Ok<int, string>(5).Assert(ok => ok > 10, "Result is lower than 10");
+        
+        var r = "Hello!".ValueOr(new { Error = "Value is null" });
+        Assert.Equal("Result is lower than 10", result);
     }
 }
