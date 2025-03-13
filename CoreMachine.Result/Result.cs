@@ -2,7 +2,12 @@
 // ReSharper disable UnusedMember.Global
 
 namespace CoreMachine.Result;
-
+/// <summary>
+/// Result type that represents the union between <see cref="T"/>
+/// and <see cref="TError"/> with a bunch of methods for error handling
+/// </summary>
+/// <typeparam name="T">The type of the success path</typeparam>
+/// <typeparam name="TError">The type of the error path</typeparam>
 public record Result<T, TError>
 {
     private readonly TError? _error;
@@ -36,12 +41,35 @@ public record Result<T, TError>
         IsError = true;
     }
 
+    /// <summary>
+    /// Matches the <see cref="Result{T,TError}"/> state and executes the corresponding delegate,
+    /// mapping both possibilities into a single type
+    /// </summary>
+    /// <param name="ok">The function for the success path</param>
+    /// <param name="err">The function for the failure path</param>
+    /// <typeparam name="TOut">The mapped result type</typeparam>
+    /// <returns>The result of either delegate</returns>
     public TOut Match<TOut>(Func<T, TOut> ok, Func<TError, TOut> err)
         => IsError ? err(_error) : ok(_value);
 
+    /// <summary>
+    /// Matches the <see cref="Result{T,TError}"/> state and executes
+    /// the corresponding asynchronous delegate,
+    /// mapping both possibilities into a single type
+    /// </summary>
+    /// <param name="ok">The asynchronous function for the success path</param>
+    /// <param name="err">The asynchronous function for the failure path</param>
+    /// <typeparam name="TOut">The mapped result type</typeparam>
+    /// <returns>the <see cref="Task{TResult}"/> containing the result of either delegate</returns>
     public async Task<TOut> MatchAsync<TOut>(Func<T, Task<TOut>> ok, Func<TError, Task<TOut>> err)
         => IsError ? await err(_error).ConfigureAwait(false) : await ok(_value).ConfigureAwait(false);
-
+    
+    /// <summary>
+    /// Matches the <see cref="Result{T,TError}"/> state and executes
+    /// the corresponding action
+    /// </summary>
+    /// <param name="ok">The action for the success path</param>
+    /// <param name="err">The action for the failure path</param>
     public void Switch(Action<T> ok, Action<TError> err)
     {
         if (IsError)
@@ -53,6 +81,12 @@ public record Result<T, TError>
         ok(_value);
     }
 
+    /// <summary>
+    /// Matches the <see cref="Result{T,TError}"/> state and executes
+    /// the corresponding asynchronous action
+    /// </summary>
+    /// <param name="ok">The asynchronous action for the success path</param>
+    /// <param name="err">The asynchronous action for the failure path</param>
     public async Task SwitchAsync(Func<T, Task> ok, Func<TError, Task> err)
     {
         if (IsError)
@@ -64,15 +98,48 @@ public record Result<T, TError>
         await ok(_value);
     }
 
+    /// <summary>
+    /// Maps the <see cref="TError"/> into a new type,
+    /// leaving the <see cref="T"/> type intact
+    /// </summary>
+    /// <param name="next">The error type mapper function</param>
+    /// <typeparam name="TNew">The new error type</typeparam>
+    /// <returns>A new <see cref="Result{T,TNew}"/> with <see cref="TNew"/> as the new error type</returns>
     public Result<T, TNew> MapError<TNew>(Func<TError, TNew> next) 
         => IsError ? next(_error) : _value;
-
+    /// <summary>
+    /// Maps the <see cref="TError"/> into a new type asynchronously,
+    /// leaving the <see cref="T"/> type intact
+    /// </summary>
+    /// <param name="next">The asynchronous error type mapper function</param>
+    /// <typeparam name="TNew">The new error type</typeparam>
+    /// <returns>
+    /// A <see cref="Task{T}"/> containing a new <see cref="Result{T,TNew}"/> with <see cref="TNew"/>
+    /// as the new error type
+    /// </returns>
     public async Task<Result<T, TNew>> MapErrorAsync<TNew>(Func<TError, Task<TNew>> next) 
         => IsError ? await next(_error).ConfigureAwait(false) : _value;
     
+    /// <summary>
+    /// Maps the <see cref="T"/> into a new type,
+    /// leaving the <see cref="TError"/> type intact
+    /// </summary>
+    /// <param name="next">The type mapper function</param>
+    /// <typeparam name="TNew">The new value type</typeparam>
+    /// <returns>A new <see cref="Result{T,TNew}"/> with <see cref="TNew"/> as the new value type</returns>
     public Result<TNew, TError> Map<TNew>(Func<T, TNew> next) 
         => !IsError ? next(_value) : _error;
 
+    /// <summary>
+    /// Maps the <see cref="T"/> into a new type asynchronously,
+    /// leaving the <see cref="TError"/> type intact
+    /// </summary>
+    /// <param name="next">The asynchronous type mapper function</param>
+    /// <typeparam name="TNew">The new value type</typeparam>
+    /// <returns>
+    /// A <see cref="Task{T}"/> containing a new <see cref="Result{T,TNew}"/> with <see cref="TNew"/>
+    /// as the new value type
+    /// </returns>
     public async Task<Result<TNew, TError>> MapAsync<TNew>(Func<T, Task<TNew>> next)
         => !IsError ? await next(_value).ConfigureAwait(false) : _error;
 
