@@ -1,6 +1,11 @@
 namespace CoreMachine.Result;
 
-public record Ok<T, TError> : Result<T, TError>
+public interface IOk<out T>
+{
+    public T Value { get; }
+}
+
+public record Ok<T, TError> : Result<T, TError>, IOk<T>
 {
     public Ok(T value) : base(value)
     {

@@ -1,6 +1,11 @@
 namespace CoreMachine.Result;
 
-public record Err<T, TError> : Result<T, TError>
+public interface IErr<out T>
+{
+    public T Error { get; }
+}
+
+public record Err<T, TError> : Result<T, TError>, IErr<TError>
 {
     public Err(TError error) : base(error)
     {
