@@ -1,17 +1,18 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+// ReSharper disable UnusedMember.Global
 
 namespace CoreMachine.Result;
 
-public readonly record struct Result<TValue, TError>
+public record Result<T, TError>
 {
     private readonly TError? _error;
-    private readonly TValue? _value;
+    private readonly T? _value;
 
     [MemberNotNullWhen(true, nameof(_error))]
     [MemberNotNullWhen(false, nameof(_value))]
     private bool IsError { get; }
-
-    private Result(TValue value)
+    
+    protected Result(T value)
     {
         if (value is null)
         {
@@ -23,7 +24,7 @@ public readonly record struct Result<TValue, TError>
         IsError = false;
     }
 
-    private Result(TError error)
+    protected Result(TError error)
     {
         if (error is null)
         {
@@ -35,13 +36,13 @@ public readonly record struct Result<TValue, TError>
         IsError = true;
     }
 
-    public TOut Match<TOut>(Func<TValue, TOut> ok, Func<TError, TOut> err)
+    public TOut Match<TOut>(Func<T, TOut> ok, Func<TError, TOut> err)
         => IsError ? err(_error) : ok(_value);
 
-    public async Task<TOut> MatchAsync<TOut>(Func<TValue, Task<TOut>> ok, Func<TError, Task<TOut>> err)
+    public async Task<TOut> MatchAsync<TOut>(Func<T, Task<TOut>> ok, Func<TError, Task<TOut>> err)
         => IsError ? await err(_error).ConfigureAwait(false) : await ok(_value).ConfigureAwait(false);
 
-    public void Switch(Action<TValue> ok, Action<TError> err)
+    public void Switch(Action<T> ok, Action<TError> err)
     {
         if (IsError)
         {
@@ -52,7 +53,7 @@ public readonly record struct Result<TValue, TError>
         ok(_value);
     }
 
-    public async Task SwitchAsync(Func<TValue, Task> ok, Func<TError, Task> err)
+    public async Task SwitchAsync(Func<T, Task> ok, Func<TError, Task> err)
     {
         if (IsError)
         {
@@ -63,32 +64,31 @@ public readonly record struct Result<TValue, TError>
         await ok(_value);
     }
 
-    public Result<TValue, TNew> MapError<TNew>(Func<TError, TNew> next) 
+    public Result<T, TNew> MapError<TNew>(Func<TError, TNew> next) 
         => IsError ? next(_error) : _value;
 
-    public async Task<Result<TValue, TNew>> MapErrorAsync<TNew>(Func<TError, Task<TNew>> next) 
+    public async Task<Result<T, TNew>> MapErrorAsync<TNew>(Func<TError, Task<TNew>> next) 
         => IsError ? await next(_error).ConfigureAwait(false) : _value;
     
-    public Result<TNew, TError> Map<TNew>(Func<TValue, TNew> next) 
+    public Result<TNew, TError> Map<TNew>(Func<T, TNew> next) 
         => !IsError ? next(_value) : _error;
 
-    public async Task<Result<TNew, TError>> MapAsync<TNew>(Func<TValue, Task<TNew>> next)
+    public async Task<Result<TNew, TError>> MapAsync<TNew>(Func<T, Task<TNew>> next)
         => !IsError ? await next(_value).ConfigureAwait(false) : _error;
 
-    public Result<TNew, TError> Bind<TNew>(Func<TValue, Result<TNew, TError>> next) 
+    public Result<TNew, TError> Bind<TNew>(Func<T, Result<TNew, TError>> next) 
         => !IsError ? next(_value) : _error; 
     
-    public async Task<Result<TNew, TError>> BindAsync<TNew>(Func<TValue, Task<Result<TNew, TError>>> next) 
+    public async Task<Result<TNew, TError>> BindAsync<TNew>(Func<T, Task<Result<TNew, TError>>> next) 
         => !IsError ? await next(_value).ConfigureAwait(false) : _error;
     
-    public Result<TValue, TNewError> BindError<TNewError>(Func<TError, Result<TValue, TNewError>> next) 
+    public Result<T, TNewError> BindError<TNewError>(Func<TError, Result<T, TNewError>> next) 
         => IsError ? next(_error) : _value; 
     
-    public async Task<Result<TValue, TNewError>> BindErrorAsync<TNewError>(
-        Func<TError, Task<Result<TValue, TNewError>>> next) 
+    public async Task<Result<T, TNewError>> BindErrorAsync<TNewError>(
+        Func<TError, Task<Result<T, TNewError>>> next) 
         => IsError ? await next(_error).ConfigureAwait(false) : _value;
-    
-    public Result<TValue, TError> Assert(Func<TValue, bool> assert, TError error)
+    public Result<T, TError> Assert(Func<T, bool> assert, TError error)
     {
         if (IsError)
         {
@@ -98,12 +98,12 @@ public readonly record struct Result<TValue, TError>
         return assert(_value) ? _value : error;
     }
     
-    public static implicit operator Result<TValue, TError>(TValue value) => new(value);
-    public static implicit operator Result<TValue, TError>(TError error) => new(error);
+    public static implicit operator Result<T, TError>(T value) => new Ok<T, TError>(value);
+    public static implicit operator Result<T, TError>(TError error) => new Err<T, TError>(error);
 }
 
 public static class Result
 {
-    public static Result<T, TE> Ok<T, TE>(T value) => value;
-    public static Result<T, TE> Error<T, TE>(TE error) => error;
+    public static Result<T, TError> Ok<T, TError>(T value) => value;
+    public static Result<T, TError> Error<T, TError>(TError error) => error;
 }
