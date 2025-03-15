@@ -12,14 +12,21 @@ public class ResultTest
 
         Assert.Throws<ArgumentNullException>(() =>
         {
-            _ = Result.Error<string, string>(null!);
+            _ = Result.Err<string, string>(null!);
         });
+    }
+
+    [Fact]
+    public void CannotInheritFromResultOutsideAssembly()
+    {
+	    var r = new TestResult<int, string>();
+	    r.Assert(ok => ok >= 0, "Hello");
     }
 
     [Fact]
     public void AssertReturnsDifferentErrors()
     {
-        var beforeAssert = Result.Error<string, string>("before assert")
+        var beforeAssert = Result.Err<string, string>("before assert")
             .Assert(val => val.StartsWith("Hello!"), "This should not be reached");
         var afterAssert = Result.Ok<string, string>("This is ok")
             .Assert(val => val.StartsWith("Hello!"), "after assert");
@@ -35,4 +42,12 @@ public class ResultTest
         var r = "Hello!".ValueOr(new { Error = "Value is null" });
         Assert.Equal("Result is lower than 10", result);
     }
+}
+
+public record TestResult<T, TE> : Result<T, TE>
+{
+	public TestResult()
+	{
+		
+	}
 }

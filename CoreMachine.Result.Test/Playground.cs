@@ -11,7 +11,7 @@ public class Playground
             Assert.Equal(10, success.Value + 5);
         }
 
-        var errorResult = Result.Error<int, string>("This is an error");
+        var errorResult = Result.Err<int, string>("This is an error");
         if (errorResult is IErr<string> error)
         {
             Assert.Equal("This is an error", error.Error);
@@ -19,9 +19,8 @@ public class Playground
         
         string match = result switch
         {
-            IOk<int> ok => $"Value is {ok.Value}",
-            IErr<string> err => err.Error,
-            _ => throw new ArgumentOutOfRangeException()
+	        Err<int, string> err => err.Error,
+	        Ok<int, string> ok => $"Value is {ok.Value}"
         };
 
         string match2 = result.Match(
