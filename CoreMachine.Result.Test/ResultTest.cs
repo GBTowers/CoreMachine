@@ -12,14 +12,14 @@ public class ResultTest
 
         Assert.Throws<ArgumentNullException>(() =>
         {
-            _ = Result.Error<string, string>(null!);
+            _ = Result.Err<string, string>(null!);
         });
     }
 
     [Fact]
     public void AssertReturnsDifferentErrors()
     {
-        var beforeAssert = Result.Error<string, string>("before assert")
+        var beforeAssert = Result.Err<string, string>("before assert")
             .Assert(val => val.StartsWith("Hello!"), "This should not be reached");
         var afterAssert = Result.Ok<string, string>("This is ok")
             .Assert(val => val.StartsWith("Hello!"), "after assert");

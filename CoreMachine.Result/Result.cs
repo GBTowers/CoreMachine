@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-// ReSharper disable UnusedMember.Global
-
+﻿// ReSharper disable UnusedMember.Global
 namespace CoreMachine.Result;
 /// <summary>
 /// Result type that represents the union between <see cref="T"/>
@@ -8,39 +6,12 @@ namespace CoreMachine.Result;
 /// </summary>
 /// <typeparam name="T">The type of the success path</typeparam>
 /// <typeparam name="TError">The type of the error path</typeparam>
-public record Result<T, TError>
+public abstract record Result<T, TError>
 {
-    private readonly TError? _error;
-    private readonly T? _value;
-
-    [MemberNotNullWhen(true, nameof(_error))]
-    [MemberNotNullWhen(false, nameof(_value))]
-    private bool IsError { get; }
+    private protected abstract TError ProtectedError { get; }
+    private protected abstract T ProtectedValue { get; }
+    private protected abstract bool IsError { get; }
     
-    protected Result(T value)
-    {
-        if (value is null)
-        {
-            throw new ArgumentNullException(nameof(value));
-        }
-
-        _value = value;
-        _error = default;
-        IsError = false;
-    }
-
-    protected Result(TError error)
-    {
-        if (error is null)
-        {
-            throw new ArgumentNullException(nameof(error));
-        }
-
-        _error = error;
-        _value = default;
-        IsError = true;
-    }
-
     /// <summary>
     /// Matches the <see cref="Result{T,TError}"/> state and executes the corresponding delegate,
     /// mapping both possibilities into a single type
@@ -50,7 +21,7 @@ public record Result<T, TError>
     /// <typeparam name="TOut">The mapped result type</typeparam>
     /// <returns>The result of either delegate</returns>
     public TOut Match<TOut>(Func<T, TOut> ok, Func<TError, TOut> err)
-        => IsError ? err(_error) : ok(_value);
+        => IsError ? err(ProtectedError) : ok(ProtectedValue);
 
     /// <summary>
     /// Matches the <see cref="Result{T,TError}"/> state and executes
@@ -62,7 +33,7 @@ public record Result<T, TError>
     /// <typeparam name="TOut">The mapped result type</typeparam>
     /// <returns>the <see cref="Task{TResult}"/> containing the result of either delegate</returns>
     public async Task<TOut> MatchAsync<TOut>(Func<T, Task<TOut>> ok, Func<TError, Task<TOut>> err)
-        => IsError ? await err(_error).ConfigureAwait(false) : await ok(_value).ConfigureAwait(false);
+        => IsError ? await err(ProtectedError).ConfigureAwait(false) : await ok(ProtectedValue).ConfigureAwait(false);
     
     /// <summary>
     /// Matches the <see cref="Result{T,TError}"/> state and executes
@@ -74,11 +45,11 @@ public record Result<T, TError>
     {
         if (IsError)
         {
-            err(_error);
+            err(ProtectedError);
             return;
         }
 
-        ok(_value);
+        ok(ProtectedValue);
     }
 
     /// <summary>
@@ -91,11 +62,11 @@ public record Result<T, TError>
     {
         if (IsError)
         {
-            await err(_error);
+            await err(ProtectedError);
             return;
         }
 
-        await ok(_value);
+        await ok(ProtectedValue);
     }
 
     /// <summary>
@@ -106,7 +77,7 @@ public record Result<T, TError>
     /// <typeparam name="TNew">The new error type</typeparam>
     /// <returns>A new <see cref="Result{T,TNew}"/> with <see cref="TNew"/> as the new error type</returns>
     public Result<T, TNew> MapError<TNew>(Func<TError, TNew> next) 
-        => IsError ? next(_error) : _value;
+        => IsError ? next(ProtectedError) : ProtectedValue;
     /// <summary>
     /// Maps the <see cref="TError"/> into a new type asynchronously,
     /// leaving the <see cref="T"/> type intact
@@ -118,7 +89,7 @@ public record Result<T, TError>
     /// as the new error type
     /// </returns>
     public async Task<Result<T, TNew>> MapErrorAsync<TNew>(Func<TError, Task<TNew>> next) 
-        => IsError ? await next(_error).ConfigureAwait(false) : _value;
+        => IsError ? await next(ProtectedError).ConfigureAwait(false) : ProtectedValue;
     
     /// <summary>
     /// Maps the <see cref="T"/> into a new type,
@@ -128,7 +99,7 @@ public record Result<T, TError>
     /// <typeparam name="TNew">The new value type</typeparam>
     /// <returns>A new <see cref="Result{T,TNew}"/> with <see cref="TNew"/> as the new value type</returns>
     public Result<TNew, TError> Map<TNew>(Func<T, TNew> next) 
-        => !IsError ? next(_value) : _error;
+        => !IsError ? next(ProtectedValue) : ProtectedError;
 
     /// <summary>
     /// Maps the <see cref="T"/> into a new type asynchronously,
@@ -141,7 +112,7 @@ public record Result<T, TError>
     /// as the new value type
     /// </returns>
     public async Task<Result<TNew, TError>> MapAsync<TNew>(Func<T, Task<TNew>> next)
-        => !IsError ? await next(_value).ConfigureAwait(false) : _error;
+        => !IsError ? await next(ProtectedValue).ConfigureAwait(false) : ProtectedError;
 
     
     /// <summary>
@@ -154,7 +125,7 @@ public record Result<T, TError>
     /// <typeparam name="TNew">The new value type for the <see cref="Result{T,TError}"/></typeparam>
     /// <returns>A new <see cref="Result{T,TError}"/> with the new value type</returns>
     public Result<TNew, TError> Bind<TNew>(Func<T, Result<TNew, TError>> next) 
-        => !IsError ? next(_value) : _error; 
+        => !IsError ? next(ProtectedValue) : ProtectedError; 
     
     /// <summary>
     /// Binds another asynchronous function returning <see cref="Result{T,TError}"/>
@@ -168,7 +139,7 @@ public record Result<T, TError>
     /// A <see cref="Task{TResult}"/> containing a new <see cref="Result{T,TError}"/> with the new value type
     /// </returns>
     public async Task<Result<TNew, TError>> BindAsync<TNew>(Func<T, Task<Result<TNew, TError>>> next) 
-        => !IsError ? await next(_value).ConfigureAwait(false) : _error;
+        => !IsError ? await next(ProtectedValue).ConfigureAwait(false) : ProtectedError;
     
     /// <summary>
     /// Binds another function returning <see cref="Result{T,TError}"/>
@@ -180,7 +151,7 @@ public record Result<T, TError>
     /// <typeparam name="TNewError">The new error type for the <see cref="Result{T,TError}"/></typeparam>
     /// <returns>A new <see cref="Result{T,TError}"/> with the new error type</returns>
     public Result<T, TNewError> BindError<TNewError>(Func<TError, Result<T, TNewError>> next) 
-        => IsError ? next(_error) : _value; 
+        => IsError ? next(ProtectedError) : ProtectedValue; 
     
     /// <summary>
     /// Binds another asynchronous function returning <see cref="Result{T,TError}"/>
@@ -195,7 +166,7 @@ public record Result<T, TError>
     /// </returns>
     public async Task<Result<T, TNewError>> BindErrorAsync<TNewError>(
         Func<TError, Task<Result<T, TNewError>>> next) 
-        => IsError ? await next(_error).ConfigureAwait(false) : _value;
+        => IsError ? await next(ProtectedError).ConfigureAwait(false) : ProtectedValue;
     
     /// <summary>
     /// Executes a given delegate-like function if the <see cref="Result{T,TError}"/> state is success,
@@ -208,14 +179,14 @@ public record Result<T, TError>
     {
         if (IsError)
         {
-            return _error;
+            return ProtectedError;
         }
         
-        return assert(_value) ? _value : error;
+        return assert(ProtectedValue) ? ProtectedValue : error;
     }
     
-    public static implicit operator Result<T, TError>(T value) => new Ok<T, TError>(value);
-    public static implicit operator Result<T, TError>(TError error) => new Err<T, TError>(error);
+    public static implicit operator Result<T, TError>(T value) => Result.Ok<T, TError>(value);
+    public static implicit operator Result<T, TError>(TError error) => Result.Err<T, TError>(error);
 }
 
 public static class Result
@@ -227,7 +198,7 @@ public static class Result
     /// <typeparam name="T">The value type of the result</typeparam>
     /// <typeparam name="TError">The error type of the result</typeparam>
     /// <returns>A new <see cref="Result{T,TError}"/> with the given value</returns>
-    public static Result<T, TError> Ok<T, TError>(T value) => value;
+    public static Result<T, TError> Ok<T, TError>(T value) => new Ok<T, TError>(value);
     /// <summary>
     /// Creates a new instance of <see cref="Result{T,TError}"/> with a failure state
     /// </summary>
@@ -235,5 +206,5 @@ public static class Result
     /// <typeparam name="T">The value type of the result</typeparam>
     /// <typeparam name="TError">The error type of the result</typeparam>
     /// <returns>A new <see cref="Result{T,TError}"/> with the given error</returns>
-    public static Result<T, TError> Error<T, TError>(TError error) => error;
+    public static Result<T, TError> Err<T, TError>(TError error) => new Err<T, TError>(error);
 }

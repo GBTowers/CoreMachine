@@ -11,7 +11,7 @@ public class Playground
             Assert.Equal(10, success.Value + 5);
         }
 
-        var errorResult = Result.Error<int, string>("This is an error");
+        var errorResult = Result.Err<int, string>("This is an error");
         if (errorResult is IErr<string> error)
         {
             Assert.Equal("This is an error", error.Error);
