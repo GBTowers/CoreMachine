@@ -72,14 +72,14 @@ public static class ResultExtensions
 		return await result.BindAsync(next);
 	}
 
-	public static async Task<Result<T, TNew>>BindError<T, TE, TNew>(this Task<Result<T, TE>> task,
+	public static async Task<Result<T, TNew>> BindError<T, TE, TNew>(this Task<Result<T, TE>> task,
 		Func<TE, Result<T, TNew>> next)
 	{
 		var result = await task.ConfigureAwait(false);
 		return result.BindError(next);
 	}
-	
-	public static async Task<Result<T, TNew>>BindErrorAsync<T, TE, TNew>(this Task<Result<T, TE>> task,
+
+	public static async Task<Result<T, TNew>> BindErrorAsync<T, TE, TNew>(this Task<Result<T, TE>> task,
 		Func<TE, Task<Result<T, TNew>>> next)
 	{
 		var result = await task.ConfigureAwait(false);
