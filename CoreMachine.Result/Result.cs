@@ -34,8 +34,8 @@ public abstract record Result<T, TError>
 	/// <param name="err">The asynchronous function for the failure path</param>
 	/// <typeparam name="TOut">The mapped result type</typeparam>
 	/// <returns>the <see cref="Task{TResult}" /> containing the result of either delegate</returns>
-	public async Task<TOut> MatchAsync<TOut>(Func<T, Task<TOut>> ok, Func<TError, Task<TOut>> err)
-		=> IsError ? await err(ProtectedError).ConfigureAwait(false) : await ok(ProtectedValue).ConfigureAwait(false);
+	public Task<TOut> MatchAsync<TOut>(Func<T, Task<TOut>> ok, Func<TError, Task<TOut>> err)
+		=> IsError ? err(ProtectedError) : ok(ProtectedValue);
 
 	/// <summary>
 	///   Matches the <see cref="Result{T,TError}" /> state and executes
@@ -60,16 +60,8 @@ public abstract record Result<T, TError>
 	/// </summary>
 	/// <param name="ok">The asynchronous action for the success path</param>
 	/// <param name="err">The asynchronous action for the failure path</param>
-	public async Task SwitchAsync(Func<T, Task> ok, Func<TError, Task> err)
-	{
-		if (IsError)
-		{
-			await err(ProtectedError);
-			return;
-		}
-
-		await ok(ProtectedValue);
-	}
+	public Task SwitchAsync(Func<T, Task> ok, Func<TError, Task> err) 
+		=> IsError ? err(ProtectedError) : ok(ProtectedValue);
 
 	/// <summary>
 	///   Maps the <see cref="TError" /> into a new type,
@@ -141,8 +133,8 @@ public abstract record Result<T, TError>
 	/// <returns>
 	///   A <see cref="Task{TResult}" /> containing a new <see cref="Result{T,TError}" /> with the new value type
 	/// </returns>
-	public async Task<Result<TNew, TError>> BindAsync<TNew>(Func<T, Task<Result<TNew, TError>>> next)
-		=> !IsError ? await next(ProtectedValue).ConfigureAwait(false) : ProtectedError;
+	public Task<Result<TNew, TError>> BindAsync<TNew>(Func<T, Task<Result<TNew, TError>>> next)
+		=> !IsError ? next(ProtectedValue) : Task.FromResult<Result<TNew,TError>>(ProtectedError);
 
 	/// <summary>
 	///   Binds another function returning <see cref="Result{T,TError}" />
@@ -167,9 +159,9 @@ public abstract record Result<T, TError>
 	/// <returns>
 	///   A <see cref="Task{TResult}" /> containing a new <see cref="Result{T,TError}" /> with the new error type
 	/// </returns>
-	public async Task<Result<T, TNewError>> BindErrorAsync<TNewError>(
+	public Task<Result<T, TNewError>> BindErrorAsync<TNewError>(
 		Func<TError, Task<Result<T, TNewError>>> next)
-		=> IsError ? await next(ProtectedError).ConfigureAwait(false) : ProtectedValue;
+		=> IsError ?  next(ProtectedError) : Task.FromResult<Result<T, TNewError>>(ProtectedValue);
 
 	/// <summary>
 	///   Executes a given delegate-like function if the <see cref="Result{T,TError}" /> state is success,
