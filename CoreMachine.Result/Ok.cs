@@ -10,6 +10,7 @@ public sealed record Ok<T, TError> : Result<T, TError>, IOk<T>
 {
 	public Ok(T value)
 	{
+		if (value is null) throw new ArgumentNullException(nameof(value));
 		ProtectedValue = value;
 		IsError = false;
 	}

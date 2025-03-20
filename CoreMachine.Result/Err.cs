@@ -10,6 +10,7 @@ public sealed record Err<T, TError> : Result<T, TError>, IErr<TError>
 {
 	public Err(TError error)
 	{
+		if (error is null) throw new ArgumentNullException(nameof(error));
 		ProtectedError = error;
 		IsError = true;
 	}
