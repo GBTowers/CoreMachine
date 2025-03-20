@@ -62,29 +62,7 @@ public abstract record Result<T, TError>
 	/// <param name="err">The asynchronous action for the failure path</param>
 	public Task SwitchAsync(Func<T, Task> ok, Func<TError, Task> err) 
 		=> IsError ? err(ProtectedError) : ok(ProtectedValue);
-
-	/// <summary>
-	///   Maps the <see cref="TError" /> into a new type,
-	///   leaving the <see cref="T" /> type intact
-	/// </summary>
-	/// <param name="next">The error type mapper function</param>
-	/// <typeparam name="TNew">The new error type</typeparam>
-	/// <returns>A new <see cref="Result{T,TNew}" /> with <see cref="TNew" /> as the new error type</returns>
-	public Result<T, TNew> MapError<TNew>(Func<TError, TNew> next)
-		=> IsError ? next(ProtectedError) : ProtectedValue;
-
-	/// <summary>
-	///   Maps the <see cref="TError" /> into a new type asynchronously,
-	///   leaving the <see cref="T" /> type intact
-	/// </summary>
-	/// <param name="next">The asynchronous error type mapper function</param>
-	/// <typeparam name="TNew">The new error type</typeparam>
-	/// <returns>
-	///   A <see cref="Task{T}" /> containing a new <see cref="Result{T,TNew}" /> with <see cref="TNew" />
-	///   as the new error type
-	/// </returns>
-	public async Task<Result<T, TNew>> MapErrorAsync<TNew>(Func<TError, Task<TNew>> next)
-		=> IsError ? await next(ProtectedError).ConfigureAwait(false) : ProtectedValue;
+	
 
 	/// <summary>
 	///   Maps the <see cref="T" /> into a new type,
@@ -109,6 +87,28 @@ public abstract record Result<T, TError>
 	public async Task<Result<TNew, TError>> MapAsync<TNew>(Func<T, Task<TNew>> next)
 		=> !IsError ? await next(ProtectedValue).ConfigureAwait(false) : ProtectedError;
 
+	/// <summary>
+	///   Maps the <see cref="TError" /> into a new type,
+	///   leaving the <see cref="T" /> type intact
+	/// </summary>
+	/// <param name="next">The error type mapper function</param>
+	/// <typeparam name="TNew">The new error type</typeparam>
+	/// <returns>A new <see cref="Result{T,TNew}" /> with <see cref="TNew" /> as the new error type</returns>
+	public Result<T, TNew> MapError<TNew>(Func<TError, TNew> next)
+		=> IsError ? next(ProtectedError) : ProtectedValue;
+
+	/// <summary>
+	///   Maps the <see cref="TError" /> into a new type asynchronously,
+	///   leaving the <see cref="T" /> type intact
+	/// </summary>
+	/// <param name="next">The asynchronous error type mapper function</param>
+	/// <typeparam name="TNew">The new error type</typeparam>
+	/// <returns>
+	///   A <see cref="Task{T}" /> containing a new <see cref="Result{T,TNew}" /> with <see cref="TNew" />
+	///   as the new error type
+	/// </returns>
+	public async Task<Result<T, TNew>> MapErrorAsync<TNew>(Func<TError, Task<TNew>> next)
+		=> IsError ? await next(ProtectedError).ConfigureAwait(false) : ProtectedValue;
 
 	/// <summary>
 	///   Binds another function returning <see cref="Result{T,TError}" />
