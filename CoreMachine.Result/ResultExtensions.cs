@@ -1,3 +1,4 @@
+// ReSharper disable UnusedMember.Global
 namespace CoreMachine.Result;
 
 public static class ResultExtensions
