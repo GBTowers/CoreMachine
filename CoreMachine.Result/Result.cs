@@ -60,9 +60,9 @@ public abstract record Result<T, TError>
 	/// </summary>
 	/// <param name="ok">The asynchronous action for the success path</param>
 	/// <param name="err">The asynchronous action for the failure path</param>
-	public Task SwitchAsync(Func<T, Task> ok, Func<TError, Task> err) 
+	public Task SwitchAsync(Func<T, Task> ok, Func<TError, Task> err)
 		=> IsError ? err(ProtectedError) : ok(ProtectedValue);
-	
+
 
 	/// <summary>
 	///   Maps the <see cref="T" /> into a new type,
@@ -79,13 +79,17 @@ public abstract record Result<T, TError>
 	///   leaving the <see cref="TError" /> type intact
 	/// </summary>
 	/// <param name="next">The asynchronous type mapper function</param>
+	/// <param name="continueOnCapturedContext">
+	/// true to attempt to marshal the continuation back to the original context captured; otherwise, false
+	/// </param>
 	/// <typeparam name="TNew">The new value type</typeparam>
 	/// <returns>
 	///   A <see cref="Task{T}" /> containing a new <see cref="Result{T,TNew}" /> with <see cref="TNew" />
 	///   as the new value type
 	/// </returns>
-	public async Task<Result<TNew, TError>> MapAsync<TNew>(Func<T, Task<TNew>> next)
-		=> !IsError ? await next(ProtectedValue).ConfigureAwait(false) : ProtectedError;
+	public async Task<Result<TNew, TError>> MapAsync<TNew>(Func<T, Task<TNew>> next,
+		bool continueOnCapturedContext = false)
+		=> !IsError ? await next(ProtectedValue).ConfigureAwait(continueOnCapturedContext) : ProtectedError;
 
 	/// <summary>
 	///   Maps the <see cref="TError" /> into a new type,
@@ -102,13 +106,17 @@ public abstract record Result<T, TError>
 	///   leaving the <see cref="T" /> type intact
 	/// </summary>
 	/// <param name="next">The asynchronous error type mapper function</param>
+	/// <param name="continueOnCapturedContext">
+	/// true to attempt to marshal the continuation back to the original context captured; otherwise, false.
+	/// </param>
 	/// <typeparam name="TNew">The new error type</typeparam>
 	/// <returns>
 	///   A <see cref="Task{T}" /> containing a new <see cref="Result{T,TNew}" /> with <see cref="TNew" />
 	///   as the new error type
 	/// </returns>
-	public async Task<Result<T, TNew>> MapErrorAsync<TNew>(Func<TError, Task<TNew>> next)
-		=> IsError ? await next(ProtectedError).ConfigureAwait(false) : ProtectedValue;
+	public async Task<Result<T, TNew>> MapErrorAsync<TNew>(Func<TError, Task<TNew>> next,
+		bool continueOnCapturedContext = false)
+		=> IsError ? await next(ProtectedError).ConfigureAwait(continueOnCapturedContext) : ProtectedValue;
 
 	/// <summary>
 	///   Binds another function returning <see cref="Result{T,TError}" />
@@ -134,7 +142,7 @@ public abstract record Result<T, TError>
 	///   A <see cref="Task{TResult}" /> containing a new <see cref="Result{T,TError}" /> with the new value type
 	/// </returns>
 	public Task<Result<TNew, TError>> BindAsync<TNew>(Func<T, Task<Result<TNew, TError>>> next)
-		=> !IsError ? next(ProtectedValue) : Task.FromResult<Result<TNew,TError>>(ProtectedError);
+		=> !IsError ? next(ProtectedValue) : Task.FromResult<Result<TNew, TError>>(ProtectedError);
 
 	/// <summary>
 	///   Binds another function returning <see cref="Result{T,TError}" />
@@ -161,7 +169,7 @@ public abstract record Result<T, TError>
 	/// </returns>
 	public Task<Result<T, TNewError>> BindErrorAsync<TNewError>(
 		Func<TError, Task<Result<T, TNewError>>> next)
-		=> IsError ?  next(ProtectedError) : Task.FromResult<Result<T, TNewError>>(ProtectedValue);
+		=> IsError ? next(ProtectedError) : Task.FromResult<Result<T, TNewError>>(ProtectedValue);
 
 	/// <summary>
 	///   Executes a given delegate-like function if the <see cref="Result{T,TError}" /> state is success,
@@ -180,15 +188,9 @@ public abstract record Result<T, TError>
 		return assert(ProtectedValue) ? ProtectedValue : error;
 	}
 
-	public static implicit operator Result<T, TError>(T value)
-	{
-		return Result.Ok<T, TError>(value);
-	}
+	public static implicit operator Result<T, TError>(T value) => Result.Ok<T, TError>(value);
 
-	public static implicit operator Result<T, TError>(TError error)
-	{
-		return Result.Err<T, TError>(error);
-	}
+	public static implicit operator Result<T, TError>(TError error) => Result.Err<T, TError>(error);
 }
 
 public static class Result
