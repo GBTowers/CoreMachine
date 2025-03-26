@@ -6,25 +6,26 @@ public class Playground
 	public void Play()
 	{
 		Result<int, string> result = Result.Ok<int, string>(5);
-		if (result is IOk<int> success)
+		
+		if (result is IOk<int>(var num))
 		{
-			Assert.Equal(10, success.Value + 5);
+			Assert.Equal(10, num + 5);
 		}
-
+		
 		var errorResult = Result.Err<int, string>("This is an error");
-		if (errorResult is IErr<string> error)
+		if (errorResult is IErr<string>(var error))
 		{
-			Assert.Equal("This is an error", error.Error);
+			Assert.Equal("This is an error", error);
 		}
 
-		var match = result switch
+		string match = result switch
 		{
-			IOk<int> ok => $"Value is {ok.Value}",
-			IErr<string> err => err.Error,
-			_ => throw new ArgumentOutOfRangeException()
+			IOk<int>(var value) => $"Value is {value}",
+			IErr<string>(var err) => err,
+			_ => throw new InvalidOperationException()
 		};
 
-		var match2 = result.Match(
+		string match2 = result.Match(
 			ok => $"Value is {ok}",
 			err => err);
 

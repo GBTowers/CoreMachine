@@ -3,11 +3,10 @@
 public class ResultTest
 {
 	[Fact]
-	public void ResultThrowsIfNull()
+	public void ResultDoesNotThrowIfNull()
 	{
-		Assert.Throws<ArgumentNullException>(() => { _ = Result.Ok<string, string>(null!); });
-
-		Assert.Throws<ArgumentNullException>(() => { _ = Result.Err<string, string>(null!); });
+		_ = Result.Ok<string, string>(null!);
+		_ = Result.Err<string, string>(null!);
 	}
 
 	[Fact]
@@ -26,7 +25,7 @@ public class ResultTest
 
 		var result = Result.Ok<int, string>(5).Assert(ok => ok > 10, "Result is lower than 10");
 
-		var r = "Hello!".ValueOr(new { Error = "Value is null" });
+		_ = "Hello!".ValueOr(new { Error = "Value is null" });
 		Assert.Equal("Result is lower than 10", result);
 	}
 }
