@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreMachine.Result", "CoreM
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreMachine.Result.Test", "CoreMachine.Result.Test\CoreMachine.Result.Test.csproj", "{557FDA74-68F7-429B-AEBC-983C1B83C7F1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Result", "Result", "{973814AF-1578-468A-9FF3-62F15ABCFB5B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{557FDA74-68F7-429B-AEBC-983C1B83C7F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{557FDA74-68F7-429B-AEBC-983C1B83C7F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{557FDA74-68F7-429B-AEBC-983C1B83C7F1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3D59254A-0C59-424C-A3DA-1C9A98EBAC1C} = {973814AF-1578-468A-9FF3-62F15ABCFB5B}
+		{557FDA74-68F7-429B-AEBC-983C1B83C7F1} = {973814AF-1578-468A-9FF3-62F15ABCFB5B}
 	EndGlobalSection
 EndGlobal
