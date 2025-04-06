@@ -5,11 +5,10 @@ public class GenerationCore
     private static readonly string GeneratedCodeAttribute =
         $"""[global::System.CodeDom.Compiler.GeneratedCodeAttribute("{typeof(GenerationCore).Namespace}", "1.0.0")]""";
 
-    public static readonly string NameSpace = "Roslyn.Generated";
+    private static readonly string NameSpace = "Roslyn.Generated";
 
-    public static readonly string AttributeName = nameof(UnionAttribute);
     
-    public static string FullyQualifiedAttributeName => NameSpace + '.' + AttributeName; 
+    public static readonly string FullyQualifiedAttributeName = NameSpace + '.' + nameof(UnionAttribute); 
     
     public static readonly string UnionAttribute =
         $$"""

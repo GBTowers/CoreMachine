@@ -1,7 +1,10 @@
 // ReSharper disable InconsistentNaming    
+
 namespace CoreMachine.UnionLike.Diagnosis
 {
     internal abstract record Result<T, E>
+        where T : IEquatable<T>
+        where E : IEquatable<E>
     {
         private record Ok(T Value) : Result<T, E>, UResult.Ok<T>;
 
@@ -26,5 +29,3 @@ namespace CoreMachine.UnionLike.Diagnosis
         }
     }
 }
-
-
