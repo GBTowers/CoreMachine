@@ -9,7 +9,7 @@ public class Playground
         
         var request = new HttpRequestMessage();
         request.Content = new StringContent("Hello!");
-        request.RequestUri = new Uri("www.google.com");
+        request.RequestUri = new Uri("https://www.google.com");
         request.Headers.Add("hello", "world");
         request.Method = HttpMethod.Get;
         httpClient.SendAsync(request);

@@ -11,8 +11,6 @@ public static class CSharpSourceGeneratorVerifier<TSourceGenerator>
 {
     public class Test : CSharpSourceGeneratorTest<TSourceGenerator, DefaultVerifier>
     {
-        public Test() { }
-
         protected override CompilationOptions CreateCompilationOptions()
         {
             var compilationOptions = base.CreateCompilationOptions();
@@ -20,7 +18,7 @@ public static class CSharpSourceGeneratorVerifier<TSourceGenerator>
                 compilationOptions.SpecificDiagnosticOptions.SetItems(GetNullableWarningsFromCompiler()));
         }
 
-        private LanguageVersion LanguageVersion { get; set; } = LanguageVersion.Default;
+        private LanguageVersion LanguageVersion => LanguageVersion.Default;
 
         private static ImmutableDictionary<string, ReportDiagnostic> GetNullableWarningsFromCompiler()
         {
