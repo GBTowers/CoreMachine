@@ -101,6 +101,8 @@ public class UnionGeneratorTests
                         #nullable enable
                         using System.Diagnostics.CodeAnalysis;
                         using CoreMachine.UnionLike;
+                        using System.Threading.Tasks;
+                        using System;
                         
                         namespace Tests;
                         
@@ -121,6 +123,38 @@ public class UnionGeneratorTests
                                 ok = default;
                                 return false;
                             }
+                            
+                        }
+                        
+                        public static class ApiResultEx
+                        {
+                            public static async Task<TOut> Match<TOut>(this Task<ApiResult> task,
+                                Func<ApiResult.Ok, TOut> ok,
+                                bool continueOnCapturedContext = false)
+                                => (await task.ConfigureAwait(continueOnCapturedContext))
+                                .Match(ok);
+                            
+                            public static async Task<TOut> MatchAsync<TOut>(this Task<ApiResult> task,
+                                Func<ApiResult.Ok, Task<TOut>> ok,
+                                bool continueOnCapturedContext = false)
+                                => await (await task.ConfigureAwait(continueOnCapturedContext))
+                                .MatchAsync(ok)
+                                .ConfigureAwait(continueOnCapturedContext);
+                            
+                            public static async Task Switch(
+                                this Task<ApiResult> task,
+                                Action<ApiResult.Ok> ok,
+                                bool continueOnCapturedContext = false)
+                                => (await task.ConfigureAwait(continueOnCapturedContext))
+                                .Switch(ok);
+                            
+                            public static async Task SwitchAsync(
+                                this Task<ApiResult> task,
+                                Func<ApiResult.Ok, Task> ok,
+                                bool continueOnCapturedContext = false)
+                                => await (await task.ConfigureAwait(continueOnCapturedContext))
+                                .SwitchAsync(ok)
+                                .ConfigureAwait(continueOnCapturedContext);
                             
                         }
                         

@@ -1,7 +1,7 @@
 using CoreMachine.UnionLike.Data;
 using Microsoft.CodeAnalysis;
 
-namespace CoreMachine.UnionLike;
+namespace CoreMachine.UnionLike.Model;
 
 public sealed record UnionToGenerate(
     string Namespace,
@@ -11,6 +11,6 @@ public sealed record UnionToGenerate(
     EquatableArray<string> TypeParameters
 )
 {
-    public string GenericDeclaration => TypeParameters.Any() ? '<' + TypeParameters.JoinString() + '>' : "";
-    public string FullName => Name + GenericDeclaration;
+    public string GenericDeclaration => TypeParameters.JoinString();
+    public string FullName => Name + (string.IsNullOrWhiteSpace(GenericDeclaration) ? "" : $"<{GenericDeclaration}>");
 }

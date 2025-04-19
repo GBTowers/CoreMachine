@@ -1,4 +1,4 @@
-namespace CoreMachine.UnionLike;
+namespace CoreMachine.UnionLike.Data;
 
 public static class EnumerableEx
 {
