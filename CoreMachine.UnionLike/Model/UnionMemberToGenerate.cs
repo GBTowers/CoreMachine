@@ -9,8 +9,21 @@ public sealed record UnionMemberToGenerate(
 {
     public string FullName(string parentName) => parentName + '.' + Name;
     public string VariableName => Name.ToLower();
+
+    public string TupleConstructor => Constructor is not null && Constructor.Parameters.Any()
+        ? Enumerable
+            .Range(1, Constructor.Parameters.Count())
+            .JoinSelect(i => $"tuple.Item{i}")
+        : "";
 }
 
-public sealed record RecordConstructor(EquatableArray<ConstructorParameter> Parameters);
+public sealed record RecordConstructor(EquatableArray<ConstructorParameter> Parameters)
+{
+    public override string ToString() => $"({Parameters.JoinString()})";
+    public string TupleSignature => $"({Parameters.JoinSelect(p => p.Type)})";
+}
 
-public sealed record ConstructorParameter(string? Type, string Name);
+public sealed record ConstructorParameter(string Type, string Name)
+{
+    public override string ToString() => $"{Type} {Name}";
+}

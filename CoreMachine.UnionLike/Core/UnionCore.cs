@@ -2,6 +2,7 @@ using System.CodeDom.Compiler;
 using CoreMachine.UnionLike.Data;
 using CoreMachine.UnionLike.Model;
 using Microsoft.CodeAnalysis;
+using System.Collections.Generic;
 
 namespace CoreMachine.UnionLike.Core;
 
@@ -10,11 +11,26 @@ public static class UnionCore
     public static void BuildUnion(SourceProductionContext context, UnionToGenerate? unionModel)
     {
         if (unionModel is null) return;
-        bool canAddImplicitOperators;
-        
-        IEnumerable<RecordConstructor> constructors = unionModel.Members
-            .Select(m => m.Constructor)
-            .Where(c => c is not null)!;
+        var canAddImplicitOperators = true;
+
+        Dictionary<string, UnionMemberToGenerate> distinctMembers = [];
+        foreach (var member in unionModel.Members)
+        {
+            if (member.Constructor is null)
+                continue;
+
+            if (!member.Constructor.Parameters.Any())
+                continue;
+
+            if (distinctMembers.TryGetValue(member.Constructor.TupleSignature, out _))
+            {
+                canAddImplicitOperators = false;
+                continue;
+            }
+
+            distinctMembers[member.Constructor.TupleSignature] = member;
+        }
+
 
         using var output = new StringWriter();
         using var writer = new IndentedTextWriter(output);
@@ -38,6 +54,7 @@ public static class UnionCore
 
         writer.WriteLine($"private {unionModel.Name}() {{ }}");
         writer.WriteLine();
+
         foreach (var member in unionModel.Members)
         {
             writer.WriteLine($"{member.Modifiers} record {member.Name} : {unionModel.FullName};");
@@ -60,6 +77,18 @@ public static class UnionCore
             writer.Indent--;
             writer.WriteLine('}');
             writer.WriteLine();
+        }
+
+        if (canAddImplicitOperators)
+        {
+            foreach (KeyValuePair<string, UnionMemberToGenerate> memberGroup in distinctMembers)
+            {
+                writer.WriteLine(
+                    $"public static implicit operator {unionModel.FullName}" +
+                    $"({memberGroup.Key} tuple)" +
+                    $" => {memberGroup.Value.Name}({memberGroup.Value.TupleConstructor})");
+                writer.WriteLine();
+            }
         }
 
         writer.Indent--;

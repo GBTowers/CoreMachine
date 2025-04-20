@@ -13,10 +13,7 @@ internal static class EquatableArray
     /// <param name="array">The input <see cref="ImmutableArray{T}"/> instance.</param>
     /// <returns>An <see cref="EquatableArray{T}"/> instance from a given <see cref="ImmutableArray{T}"/>.</returns>
     public static EquatableArray<T> AsEquatableArray<T>(this ImmutableArray<T> array)
-        where T : IEquatable<T>
-    {
-        return new(array);
-    }
+        where T : IEquatable<T> => new(array);
 }
 
 /// <summary>
@@ -75,7 +72,7 @@ public readonly struct EquatableArray<T> : IEquatable<EquatableArray<T>>, IEnume
     /// <sinheritdoc/>
     public override int GetHashCode()
     {
-        if (_array is not T[] array)
+        if (_array is not { } array)
         {
             return 0;
         }

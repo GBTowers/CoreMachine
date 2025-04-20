@@ -47,10 +47,10 @@ public class UnionGenerator : IIncrementalGenerator
                 continue;
 
             RecordConstructor? constructor = null;
-            if (recordMember.ParameterList?.Parameters is { } parameterList)
+            if (recordMember.ParameterList?.Parameters is { Count: > 0 } parameterList)
             {
                 EquatableArray<ConstructorParameter> parameters = parameterList
-                    .Select(p => new ConstructorParameter(p.Type?.ToString(), p.Identifier.Text))
+                    .Select(p => new ConstructorParameter(p.Type?.ToString() ?? string.Empty, p.Identifier.Text))
                     .ToImmutableArray();
 
                 constructor = new RecordConstructor(parameters);
