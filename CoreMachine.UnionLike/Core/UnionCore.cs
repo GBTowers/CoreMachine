@@ -2,7 +2,6 @@ using System.CodeDom.Compiler;
 using CoreMachine.UnionLike.Data;
 using CoreMachine.UnionLike.Model;
 using Microsoft.CodeAnalysis;
-using System.Collections.Generic;
 
 namespace CoreMachine.UnionLike.Core;
 
@@ -16,18 +15,15 @@ public static class UnionCore
         Dictionary<string, UnionMemberToGenerate> distinctMembers = [];
         foreach (var member in unionModel.Members)
         {
-            if (member.Constructor is null)
-                continue;
-
-            if (!member.Constructor.Parameters.Any())
-                continue;
-
-            if (distinctMembers.TryGetValue(member.Constructor.TupleSignature, out _))
+            if (member.TypeParameters.Any()) continue;
+            if (member.Constructor?.Parameters.Any() != true) continue;
+            
+            if (distinctMembers.ContainsKey(member.Constructor.TupleSignature))
             {
                 canAddImplicitOperators = false;
                 continue;
             }
-
+            
             distinctMembers[member.Constructor.TupleSignature] = member;
         }
 
@@ -83,10 +79,24 @@ public static class UnionCore
         {
             foreach (KeyValuePair<string, UnionMemberToGenerate> memberGroup in distinctMembers)
             {
-                writer.WriteLine(
-                    $"public static implicit operator {unionModel.FullName}" +
-                    $"({memberGroup.Key} tuple)" +
-                    $" => {memberGroup.Value.Name}({memberGroup.Value.TupleConstructor})");
+                if (memberGroup.Value.Constructor is null)
+                    continue;
+
+                if (memberGroup.Value.Constructor.Parameters.Count() > 1)
+                {
+                    writer.WriteLine(
+                        $"public static implicit operator {unionModel.FullName}" +
+                        $"({memberGroup.Key} tuple)" +
+                        $" => new {memberGroup.Value.Name}({memberGroup.Value.TupleConstructor})");
+                }
+                else
+                {
+                    writer.WriteLine(
+                        $"public static implicit operator {unionModel.FullName}{memberGroup.Value.Constructor}");
+                    writer.WriteLine(
+                        $"=> new {memberGroup.Value.Name}{memberGroup.Value.Constructor.ParametersSignature};");
+                }
+
                 writer.WriteLine();
             }
         }

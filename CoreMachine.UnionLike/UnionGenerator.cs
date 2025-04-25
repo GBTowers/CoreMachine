@@ -71,9 +71,11 @@ public class UnionGenerator : IIncrementalGenerator
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword));
             }
 
-            candidateMembers.Add(new UnionMemberToGenerate(recordMember.Identifier.Text,
-                string.Join(" ", modifiers),
-                constructor));
+            candidateMembers.Add(new UnionMemberToGenerate(
+                                     recordMember.Identifier.Text,
+                                     string.Join(" ", modifiers),
+                                     constructor, 
+                                     ExtractTypeParameters(recordMember)));
         }
 
         EquatableArray<UnionMemberToGenerate> members = candidateMembers.ToImmutableArray();
