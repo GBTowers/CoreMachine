@@ -39,15 +39,9 @@ public class Req
 	}
 
 
-	public static Req New(string method)
-	{
-		return new Req(HttpMethod.Parse(method));
-	}
+	public static Req New(string method) => new(HttpMethod.Parse(method));
 
-	public static Req New(HttpMethod method)
-	{
-		return new Req(method);
-	}
+	public static Req New(HttpMethod method) => new(method);
 
 	#region Body
 

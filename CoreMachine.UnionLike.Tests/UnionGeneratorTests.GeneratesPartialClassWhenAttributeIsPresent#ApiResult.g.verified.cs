@@ -44,14 +44,18 @@ public partial record ApiResult : Union<ApiResult, ApiResult.Ok, ApiResult.BadRe
 
 public static class ApiResultEx
 {
-	public static async Task<TOut> Match<TOut>(this Task<ApiResult> task,
-		Func<ApiResult.Ok, TOut> ok, Func<ApiResult.BadRequest, TOut> badrequest,
+	public static async Task<TOut> Match<TOut>(
+		this Task<ApiResult> task,
+		Func<ApiResult.Ok, TOut> ok,
+		Func<ApiResult.BadRequest, TOut> badrequest,
 		bool continueOnCapturedContext = false)
 		=> (await task.ConfigureAwait(continueOnCapturedContext))
 			.Match(ok, badrequest);
 
-	public static async Task<TOut> MatchAsync<TOut>(this Task<ApiResult> task,
-		Func<ApiResult.Ok, Task<TOut>> ok, Func<ApiResult.BadRequest, Task<TOut>> badrequest,
+	public static async Task<TOut> MatchAsync<TOut>(
+		this Task<ApiResult> task,
+		Func<ApiResult.Ok, Task<TOut>> ok,
+		Func<ApiResult.BadRequest, Task<TOut>> badrequest,
 		bool continueOnCapturedContext = false)
 		=> await (await task.ConfigureAwait(continueOnCapturedContext))
 			.MatchAsync(ok, badrequest)
@@ -59,14 +63,16 @@ public static class ApiResultEx
 
 	public static async Task Switch(
 		this Task<ApiResult> task,
-		Action<ApiResult.Ok> ok, Action<ApiResult.BadRequest> badrequest,
+		Action<ApiResult.Ok> ok,
+		Action<ApiResult.BadRequest> badrequest,
 		bool continueOnCapturedContext = false)
 		=> (await task.ConfigureAwait(continueOnCapturedContext))
 			.Switch(ok, badrequest);
 
 	public static async Task SwitchAsync(
 		this Task<ApiResult> task,
-		Func<ApiResult.Ok, Task> ok, Func<ApiResult.BadRequest, Task> badrequest,
+		Func<ApiResult.Ok, Task> ok,
+		Func<ApiResult.BadRequest, Task> badrequest,
 		bool continueOnCapturedContext = false)
 		=> await (await task.ConfigureAwait(continueOnCapturedContext))
 			.SwitchAsync(ok, badrequest)

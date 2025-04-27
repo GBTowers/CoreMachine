@@ -55,15 +55,9 @@ public interface IErr<TE>
 /// <typeparam name="TE">The type of the error path</typeparam>
 public abstract record Result<T, TE>
 {
-	public static implicit operator Result<T, TE>(T value)
-	{
-		return new Ok(value);
-	}
+	public static implicit operator Result<T, TE>(T value) => new Ok(value);
 
-	public static implicit operator Result<T, TE>(TE error)
-	{
-		return new Err(error);
-	}
+	public static implicit operator Result<T, TE>(TE error) => new Err(error);
 
 	/// <summary>
 	///   Matches the <see cref="Result{T,TE}" /> state and executes the corresponding delegate,
@@ -208,7 +202,8 @@ public abstract record Result<T, TE>
 	///   A <see cref="Task{T}" /> containing a new <see cref="Result{T,TNew}" /> with <see cref="TNew" />
 	///   as the new error type
 	/// </returns>
-	public async Task<Result<T, TNew>> MapErrorAsync<TNew>(Func<TE, Task<TNew>> next,
+	public async Task<Result<T, TNew>> MapErrorAsync<TNew>(
+		Func<TE, Task<TNew>> next,
 		bool continueOnCapturedContext = false)
 	{
 		return this switch
@@ -331,10 +326,7 @@ public static class Result
 	/// <typeparam name="T">The value type of the result</typeparam>
 	/// <typeparam name="TE">The error type of the result</typeparam>
 	/// <returns>A new <see cref="Result{T,TE}" /> with the given value</returns>
-	public static Result<T, TE> Ok<T, TE>(T value)
-	{
-		return value;
-	}
+	public static Result<T, TE> Ok<T, TE>(T value) => value;
 
 	/// <summary>
 	///   Creates a new instance of <see cref="Result{T,TE}" /> with a failure state
@@ -343,8 +335,5 @@ public static class Result
 	/// <typeparam name="T">The value type of the result</typeparam>
 	/// <typeparam name="TE">The error type of the result</typeparam>
 	/// <returns>A new <see cref="Result{T,TE}" /> with the given error</returns>
-	public static Result<T, TE> Err<T, TE>(TE error)
-	{
-		return error;
-	}
+	public static Result<T, TE> Err<T, TE>(TE error) => error;
 }

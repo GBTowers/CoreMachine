@@ -7,18 +7,12 @@ public partial record Result<T, TE>
 {
 	partial record Ok(T Value)
 	{
-		public static implicit operator T(Ok ok)
-		{
-			return ok.Value;
-		}
+		public static implicit operator T(Ok ok) => ok.Value;
 	}
 
 	partial record Err(TE Error)
 	{
-		public static implicit operator TE(Err err)
-		{
-			return err.Error;
-		}
+		public static implicit operator TE(Err err) => err.Error;
 	}
 }
 

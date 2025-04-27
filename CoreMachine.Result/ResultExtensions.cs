@@ -4,10 +4,7 @@ namespace CoreMachine.Result;
 
 public static class ResultExtensions
 {
-	public static Result<T, TE> ValueOr<T, TE>(this T? value, TE error)
-	{
-		return value is not null ? value : error;
-	}
+	public static Result<T, TE> ValueOr<T, TE>(this T? value, TE error) => value is not null ? value : error;
 
 	public static async Task<TOut> Match<T, TE, TOut>(this Task<Result<T, TE>> task, Func<T, TOut> ok, Func<TE, TOut> err)
 	{
@@ -56,35 +53,40 @@ public static class ResultExtensions
 		return result.MapError(next);
 	}
 
-	public static async Task<Result<T, TNew>> MapErrorAsync<T, TE, TNew>(this Task<Result<T, TE>> task,
+	public static async Task<Result<T, TNew>> MapErrorAsync<T, TE, TNew>(
+		this Task<Result<T, TE>> task,
 		Func<TE, Task<TNew>> next)
 	{
 		Result<T, TE> result = await task.ConfigureAwait(false);
 		return await result.MapErrorAsync(next);
 	}
 
-	public static async Task<Result<TNew, TE>> Bind<T, TE, TNew>(this Task<Result<T, TE>> task,
+	public static async Task<Result<TNew, TE>> Bind<T, TE, TNew>(
+		this Task<Result<T, TE>> task,
 		Func<T, Result<TNew, TE>> next)
 	{
 		Result<T, TE> result = await task.ConfigureAwait(false);
 		return result.Bind(next);
 	}
 
-	public static async Task<Result<TNew, TE>> BindAsync<T, TE, TNew>(this Task<Result<T, TE>> task,
+	public static async Task<Result<TNew, TE>> BindAsync<T, TE, TNew>(
+		this Task<Result<T, TE>> task,
 		Func<T, Task<Result<TNew, TE>>> next)
 	{
 		Result<T, TE> result = await task.ConfigureAwait(false);
 		return await result.BindAsync(next);
 	}
 
-	public static async Task<Result<T, TNew>> BindError<T, TE, TNew>(this Task<Result<T, TE>> task,
+	public static async Task<Result<T, TNew>> BindError<T, TE, TNew>(
+		this Task<Result<T, TE>> task,
 		Func<TE, Result<T, TNew>> next)
 	{
 		Result<T, TE> result = await task.ConfigureAwait(false);
 		return result.BindError(next);
 	}
 
-	public static async Task<Result<T, TNew>> BindErrorAsync<T, TE, TNew>(this Task<Result<T, TE>> task,
+	public static async Task<Result<T, TNew>> BindErrorAsync<T, TE, TNew>(
+		this Task<Result<T, TE>> task,
 		Func<TE, Task<Result<T, TNew>>> next)
 	{
 		Result<T, TE> result = await task.ConfigureAwait(false);

@@ -15,10 +15,7 @@ public sealed record UnionMemberToGenerate(
 			.JoinSelect(i => $"tuple.Item{i}")
 		: "";
 
-	public string FullName(string parentName)
-	{
-		return parentName + '.' + Name;
-	}
+	public string FullName(string parentName) => parentName + '.' + Name;
 }
 
 public sealed record RecordConstructor(EquatableArray<ConstructorParameter> Parameters)
@@ -26,16 +23,10 @@ public sealed record RecordConstructor(EquatableArray<ConstructorParameter> Para
 	public string TupleSignature => $"({Parameters.JoinSelect(p => p.Type)})";
 	public string ParametersSignature => $"({Parameters.JoinSelect(p => p.Name)})";
 
-	public override string ToString()
-	{
-		return $"({Parameters.JoinString()})";
-	}
+	public override string ToString() => $"({Parameters.JoinString()})";
 }
 
 public sealed record ConstructorParameter(string Type, string Name)
 {
-	public override string ToString()
-	{
-		return $"{Type} {Name}";
-	}
+	public override string ToString() => $"{Type} {Name}";
 }

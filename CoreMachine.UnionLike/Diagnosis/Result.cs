@@ -8,15 +8,9 @@ namespace CoreMachine.UnionLike.Diagnosis
 		where T : IEquatable<T>
 		where E : IEquatable<E>
 	{
-		public static implicit operator Result<T, E>(T value)
-		{
-			return new Ok(value);
-		}
+		public static implicit operator Result<T, E>(T value) => new Ok(value);
 
-		public static implicit operator Result<T, E>(E error)
-		{
-			return new Err(error);
-		}
+		public static implicit operator Result<T, E>(E error) => new Err(error);
 
 		private record Ok(T Value) : Result<T, E>, Ok<T>;
 

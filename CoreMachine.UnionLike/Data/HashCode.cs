@@ -23,11 +23,11 @@ internal struct HashCode
 	private uint _queue1, _queue2, _queue3;
 	private uint _length;
 
-    /// <summary>
-    ///   Initializes the default seed.
-    /// </summary>
-    /// <returns>A random seed.</returns>
-    // ReSharper disable once RedundantUnsafeContext
+	/// <summary>
+	///   Initializes the default seed.
+	/// </summary>
+	/// <returns>A random seed.</returns>
+	// ReSharper disable once RedundantUnsafeContext
 	private static unsafe uint GenerateGlobalSeed()
 	{
 		var bytes = new byte[4];
@@ -37,12 +37,12 @@ internal struct HashCode
 		return BitConverter.ToUInt32(bytes, 0);
 	}
 
-    /// <summary>
-    ///   Adds a single value to the current hash.
-    /// </summary>
-    /// <typeparam name="T">The type of the value to add into the hash code.</typeparam>
-    /// <param name="value">The value to add into the hash code.</param>
-    public void Add<T>(T value)
+	/// <summary>
+	///   Adds a single value to the current hash.
+	/// </summary>
+	/// <typeparam name="T">The type of the value to add into the hash code.</typeparam>
+	/// <param name="value">The value to add into the hash code.</param>
+	public void Add<T>(T value)
 	{
 		Add(value?.GetHashCode() ?? 0);
 	}
@@ -57,28 +57,17 @@ internal struct HashCode
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static uint Round(uint hash, uint input)
-	{
-		return RotateLeft(hash + input * Prime2, 13) * Prime1;
-	}
+	private static uint Round(uint hash, uint input) => RotateLeft(hash + input * Prime2, 13) * Prime1;
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static uint QueueRound(uint hash, uint queuedValue)
-	{
-		return RotateLeft(hash + queuedValue * Prime3, 17) * Prime4;
-	}
+	private static uint QueueRound(uint hash, uint queuedValue) => RotateLeft(hash + queuedValue * Prime3, 17) * Prime4;
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static uint MixState(uint v1, uint v2, uint v3, uint v4)
-	{
-		return RotateLeft(v1, 1) + RotateLeft(v2, 7) + RotateLeft(v3, 12) + RotateLeft(v4, 18);
-	}
+	private static uint MixState(uint v1, uint v2, uint v3, uint v4) =>
+		RotateLeft(v1, 1) + RotateLeft(v2, 7) + RotateLeft(v3, 12) + RotateLeft(v4, 18);
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static uint MixEmptyState()
-	{
-		return Seed + Prime5;
-	}
+	private static uint MixEmptyState() => Seed + Prime5;
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static uint MixFinal(uint hash)
@@ -122,11 +111,11 @@ internal struct HashCode
 		}
 	}
 
-    /// <summary>
-    ///   Gets the resulting hashcode from the current instance.
-    /// </summary>
-    /// <returns>The resulting hashcode from the current instance.</returns>
-    public int ToHashCode()
+	/// <summary>
+	///   Gets the resulting hashcode from the current instance.
+	/// </summary>
+	/// <returns>The resulting hashcode from the current instance.</returns>
+	public int ToHashCode()
 	{
 		uint length = _length;
 		uint position = length % 4;
@@ -151,37 +140,27 @@ internal struct HashCode
 		return (int)hash;
 	}
 
-    /// <inheritdoc />
-    [Obsolete(
-		"HashCode is a mutable struct and should not be compared with other HashCodes. Use ToHashCode to retrieve the computed hash code.",
-		true)]
-	[EditorBrowsable(EditorBrowsableState.Never)]
-	public override int GetHashCode()
-	{
-		throw new NotSupportedException();
-	}
+	/// <inheritdoc />
+	[Obsolete(
+		 "HashCode is a mutable struct and should not be compared with other HashCodes. Use ToHashCode to retrieve the computed hash code.",
+		 true), EditorBrowsable(EditorBrowsableState.Never)]
+	public override int GetHashCode() => throw new NotSupportedException();
 
-    /// <inheritdoc />
-    [Obsolete("HashCode is a mutable struct and should not be compared with other HashCodes.", true)]
-	[EditorBrowsable(EditorBrowsableState.Never)]
-	public override bool Equals(object? obj)
-	{
-		throw new NotSupportedException();
-	}
+	/// <inheritdoc />
+	[Obsolete("HashCode is a mutable struct and should not be compared with other HashCodes.", true),
+	 EditorBrowsable(EditorBrowsableState.Never)]
+	public override bool Equals(object? obj) => throw new NotSupportedException();
 
-    /// <summary>
-    ///   Rotates the specified value left by the specified number of bits.
-    ///   Similar in behavior to the x86 instruction ROL.
-    /// </summary>
-    /// <param name="value">The value to rotate.</param>
-    /// <param name="offset">
-    ///   The number of bits to rotate by.
-    ///   Any value outside the range [0..31] is treated as congruent mod 32.
-    /// </param>
-    /// <returns>The rotated value.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static uint RotateLeft(uint value, int offset)
-	{
-		return (value << offset) | (value >> (32 - offset));
-	}
+	/// <summary>
+	///   Rotates the specified value left by the specified number of bits.
+	///   Similar in behavior to the x86 instruction ROL.
+	/// </summary>
+	/// <param name="value">The value to rotate.</param>
+	/// <param name="offset">
+	///   The number of bits to rotate by.
+	///   Any value outside the range [0..31] is treated as congruent mod 32.
+	/// </param>
+	/// <returns>The rotated value.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static uint RotateLeft(uint value, int offset) => (value << offset) | (value >> (32 - offset));
 }

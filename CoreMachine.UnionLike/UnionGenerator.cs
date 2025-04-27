@@ -90,8 +90,6 @@ public class UnionGenerator : IIncrementalGenerator
 			.Select(p => p.Identifier.Text).ToImmutableArray() ?? [];
 	}
 
-	private static bool SyntaxPredicate(SyntaxNode node, CancellationToken token)
-	{
-		return node is RecordDeclarationSyntax candidate && candidate.Modifiers.Any(SyntaxKind.PartialKeyword);
-	}
+	private static bool SyntaxPredicate(SyntaxNode node, CancellationToken token) =>
+		node is RecordDeclarationSyntax candidate && candidate.Modifiers.Any(SyntaxKind.PartialKeyword);
 }

@@ -70,8 +70,5 @@ public class UnionGeneratorTests
 public class VerifyChecksTests
 {
 	[Fact]
-	public Task Run()
-	{
-		return VerifyChecks.Run();
-	}
+	public Task Run() => VerifyChecks.Run();
 }
