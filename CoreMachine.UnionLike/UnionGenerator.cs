@@ -11,89 +11,87 @@ namespace CoreMachine.UnionLike;
 [Generator]
 public class UnionGenerator : IIncrementalGenerator
 {
-    public void Initialize(IncrementalGeneratorInitializationContext context)
-    {
-        context.RegisterPostInitializationOutput(AttributeCore.GenerateMarkerAttribute);
+	public void Initialize(IncrementalGeneratorInitializationContext context)
+	{
+		context.RegisterPostInitializationOutput(AttributeCore.GenerateMarkerAttribute);
 
-        IncrementalValuesProvider<UnionToGenerate> pipeline = context
-            .SyntaxProvider
-            .ForAttributeWithMetadataName(AttributeCore.FullyQualifiedAttributeName,
-                SyntaxPredicate,
-                SemanticTransform)
-            .Where(u => u is not null)!;
+		IncrementalValuesProvider<UnionToGenerate> pipeline = context
+			.SyntaxProvider
+			.ForAttributeWithMetadataName(AttributeCore.FullyQualifiedAttributeName,
+				SyntaxPredicate,
+				SemanticTransform)
+			.Where(u => u is not null)!;
 
-        var arities = pipeline.Collect()
-            .Select((u, _)
-                => u.Select(x => x.Members.Count()).Distinct().ToImmutableArray());
+		IncrementalValueProvider<ImmutableArray<int>> arities = pipeline.Collect()
+			.Select((u, _)
+				=> u.Select(x => x.Members.Count()).Distinct().ToImmutableArray());
 
-        context.RegisterImplementationSourceOutput(arities, ArityCore.GenerateArities);
+		context.RegisterImplementationSourceOutput(arities, ArityCore.GenerateArities);
 
-        context.RegisterImplementationSourceOutput(pipeline, UnionCore.BuildUnion);
-    }
+		context.RegisterImplementationSourceOutput(pipeline, UnionCore.BuildUnion);
+	}
 
-    private static UnionToGenerate? SemanticTransform(
-        GeneratorAttributeSyntaxContext context,
-        CancellationToken token)
-    {
-        if (context.TargetNode is not RecordDeclarationSyntax candidate) return null;
-
-
-        List<UnionMemberToGenerate> candidateMembers = [];
-        foreach (var member in candidate.Members)
-        {
-            if (member is not RecordDeclarationSyntax recordMember
-                || !recordMember.Modifiers.Any(SyntaxKind.PartialKeyword)
-                || recordMember.Modifiers.Any(SyntaxKind.PrivateKeyword))
-                continue;
-
-            RecordConstructor? constructor = null;
-            if (recordMember.ParameterList?.Parameters is { Count: > 0 } parameterList)
-            {
-                EquatableArray<ConstructorParameter> parameters = parameterList
-                    .Select(p => new ConstructorParameter(p.Type?.ToString() ?? string.Empty, p.Identifier.Text))
-                    .ToImmutableArray();
-
-                constructor = new RecordConstructor(parameters);
-            }
+	private static UnionToGenerate? SemanticTransform(
+		GeneratorAttributeSyntaxContext context,
+		CancellationToken token)
+	{
+		if (context.TargetNode is not RecordDeclarationSyntax candidate) return null;
 
 
-            var modifiers = recordMember.Modifiers;
-            if (!modifiers.Any(SyntaxKind.SealedKeyword))
-            {
-                modifiers = modifiers.Insert(Math.Max(modifiers.IndexOf(SyntaxKind.PartialKeyword) - 1,
-                        0),
-                    SyntaxFactory.Token(SyntaxKind.SealedKeyword));
-            }
+		List<UnionMemberToGenerate> candidateMembers = [];
+		foreach (var member in candidate.Members)
+		{
+			if (member is not RecordDeclarationSyntax recordMember
+			    || !recordMember.Modifiers.Any(SyntaxKind.PartialKeyword)
+			    || recordMember.Modifiers.Any(SyntaxKind.PrivateKeyword))
+				continue;
 
-            if (!modifiers.Any(SyntaxKind.PublicKeyword) && !modifiers.Any(SyntaxKind.InternalKeyword))
-            {
-                modifiers = modifiers.Insert(0,
-                    SyntaxFactory.Token(SyntaxKind.PublicKeyword));
-            }
+			RecordConstructor? constructor = null;
+			if (recordMember.ParameterList?.Parameters is { Count: > 0 } parameterList)
+			{
+				EquatableArray<ConstructorParameter> parameters = parameterList
+					.Select(p => new ConstructorParameter(p.Type?.ToString() ?? string.Empty, p.Identifier.Text))
+					.ToImmutableArray();
 
-            candidateMembers.Add(new UnionMemberToGenerate(
-                                     recordMember.Identifier.Text,
-                                     string.Join(" ", modifiers),
-                                     constructor, 
-                                     ExtractTypeParameters(recordMember)));
-        }
+				constructor = new RecordConstructor(parameters);
+			}
 
-        EquatableArray<UnionMemberToGenerate> members = candidateMembers.ToImmutableArray();
 
-        return new UnionToGenerate(
-            context.TargetSymbol.ContainingNamespace.ToDisplayString(),
-            context.TargetSymbol.Name,
-            members,
-            candidate.Modifiers,
-            ExtractTypeParameters(candidate));
-    }
+			var modifiers = recordMember.Modifiers;
+			if (!modifiers.Any(SyntaxKind.SealedKeyword))
+				modifiers = modifiers.Insert(Math.Max(modifiers.IndexOf(SyntaxKind.PartialKeyword) - 1,
+						0),
+					SyntaxFactory.Token(SyntaxKind.SealedKeyword));
 
-    private static ImmutableArray<string> ExtractTypeParameters(RecordDeclarationSyntax recordMember) =>
-        recordMember.TypeParameterList?.Parameters
-            .Select(p => p.Identifier.Text).ToImmutableArray() ?? [];
+			if (!modifiers.Any(SyntaxKind.PublicKeyword) && !modifiers.Any(SyntaxKind.InternalKeyword))
+				modifiers = modifiers.Insert(0,
+					SyntaxFactory.Token(SyntaxKind.PublicKeyword));
 
-    private static bool SyntaxPredicate(SyntaxNode node, CancellationToken token)
-        => node is RecordDeclarationSyntax candidate && candidate.Modifiers.Any(SyntaxKind.PartialKeyword);
+			candidateMembers.Add(new UnionMemberToGenerate(
+				recordMember.Identifier.Text,
+				string.Join(" ", modifiers),
+				constructor,
+				ExtractTypeParameters(recordMember)));
+		}
 
-    
+		EquatableArray<UnionMemberToGenerate> members = candidateMembers.ToImmutableArray();
+
+		return new UnionToGenerate(
+			context.TargetSymbol.ContainingNamespace.ToDisplayString(),
+			context.TargetSymbol.Name,
+			members,
+			candidate.Modifiers,
+			ExtractTypeParameters(candidate));
+	}
+
+	private static ImmutableArray<string> ExtractTypeParameters(RecordDeclarationSyntax recordMember)
+	{
+		return recordMember.TypeParameterList?.Parameters
+			.Select(p => p.Identifier.Text).ToImmutableArray() ?? [];
+	}
+
+	private static bool SyntaxPredicate(SyntaxNode node, CancellationToken token)
+	{
+		return node is RecordDeclarationSyntax candidate && candidate.Modifiers.Any(SyntaxKind.PartialKeyword);
+	}
 }

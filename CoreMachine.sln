@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreMachine.UnionLike.Attri
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreMachine.UnionLike.Tests", "CoreMachine.UnionLike.Tests\CoreMachine.UnionLike.Tests.csproj", "{DAA16E4C-E120-4CFE-9816-0EA3C651E851}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreMachine.UnionLike.Integration", "CoreMachine.UnionLike.Integration\CoreMachine.UnionLike.Integration.csproj", "{2F6E5121-2465-4219-8125-00B49A176CD7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +56,10 @@ Global
 		{DAA16E4C-E120-4CFE-9816-0EA3C651E851}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAA16E4C-E120-4CFE-9816-0EA3C651E851}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DAA16E4C-E120-4CFE-9816-0EA3C651E851}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F6E5121-2465-4219-8125-00B49A176CD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F6E5121-2465-4219-8125-00B49A176CD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F6E5121-2465-4219-8125-00B49A176CD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F6E5121-2465-4219-8125-00B49A176CD7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{3D59254A-0C59-424C-A3DA-1C9A98EBAC1C} = {973814AF-1578-468A-9FF3-62F15ABCFB5B}
@@ -63,5 +69,6 @@ Global
 		{68F1BC7F-328F-424A-B14C-C1A91E1C2DB1} = {5F865C1E-BEF1-41E5-8087-5D9E2E3E03AD}
 		{13AA74DB-57DC-4540-B8F7-75A949C60979} = {5F865C1E-BEF1-41E5-8087-5D9E2E3E03AD}
 		{DAA16E4C-E120-4CFE-9816-0EA3C651E851} = {5F865C1E-BEF1-41E5-8087-5D9E2E3E03AD}
+		{2F6E5121-2465-4219-8125-00B49A176CD7} = {5F865C1E-BEF1-41E5-8087-5D9E2E3E03AD}
 	EndGlobalSection
 EndGlobal

@@ -19,7 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CoreMachine.Req\CoreMachine.Req.csproj" />
+        <ProjectReference Include="..\CoreMachine.Req\CoreMachine.Req.csproj"/>
     </ItemGroup>
 
 </Project>

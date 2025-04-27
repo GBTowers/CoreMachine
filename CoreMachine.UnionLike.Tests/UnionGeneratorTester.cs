@@ -13,18 +13,21 @@ public static class UnionGeneratorTester
 		[
 			MetadataReference.CreateFromFile(typeof(object).Assembly.Location)
 		];
-		
+
 		var compilation = CSharpCompilation.Create(
-			assemblyName: "Tests",
-			syntaxTrees: [syntaxTree],
-			references: references);
-		
+			"Tests",
+			[syntaxTree],
+			references);
+
 		var generator = new UnionGenerator();
 
 		GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
 
 		driver = driver.RunGenerators(compilation);
 
-		return Verifier.Verify(driver);
+		var settings = new VerifySettings();
+		settings.UseUniqueDirectory();
+
+		return Verifier.Verify(driver, settings).UseDirectory("Snapshots");
 	}
 }

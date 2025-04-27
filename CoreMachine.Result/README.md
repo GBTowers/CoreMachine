@@ -1,9 +1,11 @@
 # CoreMachine.Result
-Just another Result library. 
+
+Just another Result library.
 
 [Source code](https://www.github.com/GBTowers/CoreMachine/)
 
 ### Examples
+
 ```csharp
 Result<int, string> result = MethodReturningResult();
 

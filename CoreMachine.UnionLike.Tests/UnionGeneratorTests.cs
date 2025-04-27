@@ -1,10 +1,7 @@
 ﻿namespace CoreMachine.UnionLike.Tests;
 
-
-
 public class UnionGeneratorTests
 {
-
 	[Fact]
 	public Task GeneratesPartialClassWhenAttributeIsPresent()
 	{
@@ -37,11 +34,34 @@ public class UnionGeneratorTests
 
 		                    public partial record ApiResult
 		                    {
-		                        private partial record Ok;
+		                        partial record Ok;
 		                    }    
 
 		                    """;
 
+
+		return UnionGeneratorTester.Verify(code);
+	}
+
+	[Fact]
+	public Task HandlesBaseClassGenericParameters()
+	{
+		const string code =
+			"""
+			using System;
+			using CoreMachine.UnionLike.Attributes;
+
+			namespace Tests;
+
+			[Union]
+			public partial record Result<T, TE>
+			{
+			    partial record Ok(T Value);
+			    partial record Err(TE Error);
+			}
+
+
+			""";
 
 		return UnionGeneratorTester.Verify(code);
 	}
@@ -50,6 +70,8 @@ public class UnionGeneratorTests
 public class VerifyChecksTests
 {
 	[Fact]
-	public Task Run() =>
-		VerifyChecks.Run();
+	public Task Run()
+	{
+		return VerifyChecks.Run();
+	}
 }

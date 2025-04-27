@@ -6,17 +6,11 @@ public class Playground
 	public void Play()
 	{
 		Result<int, string> result = Result.Ok<int, string>(5);
-		
-		if (result is IOk<int>(var num))
-		{
-			Assert.Equal(10, num + 5);
-		}
-		
-		var errorResult = Result.Err<int, string>("This is an error");
-		if (errorResult is IErr<string>(var error))
-		{
-			Assert.Equal("This is an error", error);
-		}
+
+		if (result is IOk<int>(var num)) Assert.Equal(10, num + 5);
+
+		Result<int, string> errorResult = Result.Err<int, string>("This is an error");
+		if (errorResult is IErr<string>(var error)) Assert.Equal("This is an error", error);
 
 		string match = result switch
 		{
