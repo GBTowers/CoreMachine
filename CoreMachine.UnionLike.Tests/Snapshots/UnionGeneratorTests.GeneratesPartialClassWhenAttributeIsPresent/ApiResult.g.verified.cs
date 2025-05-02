@@ -10,66 +10,70 @@ namespace Tests;
 
 public partial record ApiResult : Union<ApiResult, ApiResult.Ok, ApiResult.BadRequest>
 {
-    private ApiResult() { }
-    
-    public sealed partial record Ok : ApiResult;
-    
-    public bool IsOk([NotNullWhen(true)] out Ok? k)
-    {
-        if (this is Ok val)
-        {
-            k = val;
-            return true;
-        }
-        
-        k = default;
-        return false;
-    }
-    
-    public sealed partial record BadRequest : ApiResult;
-    
-    public bool IsBadRequest([NotNullWhen(true)] out BadRequest? adRequest)
-    {
-        if (this is BadRequest val)
-        {
-            adRequest = val;
-            return true;
-        }
-        
-        adRequest = default;
-        return false;
-    }
-    
+	private ApiResult() { }
+	
+	public sealed partial record Ok : ApiResult;
+	
+	public bool IsOk([NotNullWhen(true)] out Ok? ok)
+	{
+		if (this is Ok val)
+		{
+			ok = val;
+			return true;
+		}
+		
+		ok = default;
+		return false;
+	}
+	
+	public sealed partial record BadRequest : ApiResult;
+	
+	public bool IsBadRequest([NotNullWhen(true)] out BadRequest? badRequest)
+	{
+		if (this is BadRequest val)
+		{
+			badRequest = val;
+			return true;
+		}
+		
+		badRequest = default;
+		return false;
+	}
+	
 }
 
 public static class ApiResultEx
 {
-    public static async Task<TOut> Match<TOut>(this Task<ApiResult> task,
-        Func<ApiResult.Ok, TOut> ok, Func<ApiResult.BadRequest, TOut> badrequest,
-        bool continueOnCapturedContext = false)
-        => (await task.ConfigureAwait(continueOnCapturedContext))
-        .Match(ok, badrequest);
-    
-    public static async Task<TOut> MatchAsync<TOut>(this Task<ApiResult> task,
-        Func<ApiResult.Ok, Task<TOut>> ok, Func<ApiResult.BadRequest, Task<TOut>> badrequest,
-        bool continueOnCapturedContext = false)
-        => await (await task.ConfigureAwait(continueOnCapturedContext))
-        .MatchAsync(ok, badrequest)
-        .ConfigureAwait(continueOnCapturedContext);
-    
-    public static async Task Switch(
-        this Task<ApiResult> task,
-        Action<ApiResult.Ok> ok, Action<ApiResult.BadRequest> badrequest,
-        bool continueOnCapturedContext = false)
-        => (await task.ConfigureAwait(continueOnCapturedContext))
-        .Switch(ok, badrequest);
-    
-    public static async Task SwitchAsync(
-        this Task<ApiResult> task,
-        Func<ApiResult.Ok, Task> ok, Func<ApiResult.BadRequest, Task> badrequest,
-        bool continueOnCapturedContext = false)
-        => await (await task.ConfigureAwait(continueOnCapturedContext))
-        .SwitchAsync(ok, badrequest)
-        .ConfigureAwait(continueOnCapturedContext);
-    
+	public static async Task<TOut> Match<TOut>(this Task<ApiResult> task,
+		Func<ApiResult.Ok, TOut> ok,
+		Func<ApiResult.BadRequest, TOut> badrequest,
+		bool continueOnCapturedContext = false)
+		=> (await task.ConfigureAwait(continueOnCapturedContext))
+		.Match(ok, badrequest);
+	
+	public static async Task<TOut> MatchAsync<TOut>(this Task<ApiResult> task,
+		Func<ApiResult.Ok, Task<TOut>> ok,
+		Func<ApiResult.BadRequest, Task<TOut>> badrequest,
+		bool continueOnCapturedContext = false)
+		=> await (await task.ConfigureAwait(continueOnCapturedContext))
+		.MatchAsync(ok, badrequest)
+		.ConfigureAwait(continueOnCapturedContext);
+	
+	public static async Task Switch<>(
+		this Task<ApiResult> task,
+		Action<ApiResult.Ok> ok,
+		Action<ApiResult.BadRequest> badrequest,
+		bool continueOnCapturedContext = false)
+		=> (await task.ConfigureAwait(continueOnCapturedContext))
+		.Switch(ok, badrequest);
+	
+	public static async Task SwitchAsync<>(
+		this Task<ApiResult> task,
+		Func<ApiResult.Ok, Task> ok,
+		Func<ApiResult.BadRequest, Task> badrequest,
+		bool continueOnCapturedContext = false)
+		=> await (await task.ConfigureAwait(continueOnCapturedContext))
+		.SwitchAsync(ok, badrequest)
+		.ConfigureAwait(continueOnCapturedContext);
+	
 }

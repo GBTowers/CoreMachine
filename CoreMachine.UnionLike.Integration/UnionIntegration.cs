@@ -3,7 +3,7 @@
 namespace CoreMachine.UnionLike.Integration;
 
 [Union]
-public partial record Result<T, TE>
+public abstract partial record Result<T, TE>
 {
 	partial record Ok(T Value)
 	{
@@ -14,25 +14,20 @@ public partial record Result<T, TE>
 	{
 		public static implicit operator TE(Err err) => err.Error;
 	}
+	
 }
 
-public class UnitTest1
+public class UnionIntegration
 {
 	[Fact]
-	public void Test1()
+	public void MatchMethodWorksOnDerivedClasses()
 	{
 		var result = new Result<int, string>.Ok(4);
 
-		string r = result.Match(ok => ok.Value.ToString(), err => err.Error);
-
-		if (result.IsOk(out var ok))
-		{
-			int num = ok;
-		}
-
-		if (result.IsErr(out var err))
-		{
-			string str = err;
-		}
+		string s = result.Match(
+			success => success.Value.ToString(),
+			failure => failure.Error);
+		
+		Assert.Equal("4", s);
 	}
 }

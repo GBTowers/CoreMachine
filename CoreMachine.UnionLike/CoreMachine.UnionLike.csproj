@@ -28,14 +28,14 @@
     </ItemGroup>
 
     <ItemGroup>
-        <!--        &lt;!&ndash; Pack the generator dll in the analyzers/dotnet/cs path &ndash;&gt;-->
-        <!--        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />-->
+        <!-- Pack the generator dll in the analyzers/dotnet/cs path -->
+        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
 
-        <!--        &lt;!&ndash; Pack the attributes dll in the analyzers/dotnet/cs path &ndash;&gt;-->
-        <!--        <None Include="$(OutputPath)\CoreMachine.UnionLike.Attributes.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />-->
+        <!-- Pack the attributes dll in the analyzers/dotnet/cs path -->
+        <None Include="$(OutputPath)\CoreMachine.UnionLike.Attributes.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
 
-        <!--        &lt;!&ndash; Pack the attributes dll in the lib\netstandard2.0 path &ndash;&gt;-->
-        <!--        <None Include="$(OutputPath)\CoreMachine.UnionLike.Attributes.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="true" />-->
+        <!-- Pack the attributes dll in the lib\netstandard2.0 path -->
+        <None Include="$(OutputPath)\CoreMachine.UnionLike.Attributes.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="true"/>
     </ItemGroup>
 
 </Project>

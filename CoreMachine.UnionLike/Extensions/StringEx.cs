@@ -1,4 +1,4 @@
-namespace CoreMachine.UnionLike.Data;
+namespace CoreMachine.UnionLike.Extensions;
 
 public static class StringEx
 {

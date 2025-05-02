@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using CoreMachine.UnionLike.Core;
 using CoreMachine.UnionLike.Data;
+using CoreMachine.UnionLike.Extensions;
 using CoreMachine.UnionLike.Model;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -11,13 +12,14 @@ namespace CoreMachine.UnionLike;
 [Generator]
 public class UnionGenerator : IIncrementalGenerator
 {
+	private const string FullyQualifiedAttributeName = "CoreMachine.UnionLike.Attributes.UnionAttribute"; 
+	
+	
 	public void Initialize(IncrementalGeneratorInitializationContext context)
 	{
-		context.RegisterPostInitializationOutput(AttributeCore.GenerateMarkerAttribute);
-
 		IncrementalValuesProvider<UnionToGenerate> pipeline = context
 			.SyntaxProvider
-			.ForAttributeWithMetadataName(AttributeCore.FullyQualifiedAttributeName,
+			.ForAttributeWithMetadataName(FullyQualifiedAttributeName,
 				SyntaxPredicate,
 				SemanticTransform)
 			.Where(u => u is not null)!;
@@ -39,6 +41,7 @@ public class UnionGenerator : IIncrementalGenerator
 
 
 		List<UnionMemberToGenerate> candidateMembers = [];
+
 		foreach (var member in candidate.Members)
 		{
 			if (member is not RecordDeclarationSyntax recordMember
@@ -59,8 +62,8 @@ public class UnionGenerator : IIncrementalGenerator
 
 			var modifiers = recordMember.Modifiers;
 			if (!modifiers.Any(SyntaxKind.SealedKeyword))
-				modifiers = modifiers.Insert(Math.Max(modifiers.IndexOf(SyntaxKind.PartialKeyword) - 1,
-						0),
+				modifiers = modifiers.Insert(
+					Math.Max(modifiers.IndexOf(SyntaxKind.PartialKeyword) - 1, 0),
 					SyntaxFactory.Token(SyntaxKind.SealedKeyword));
 
 			if (!modifiers.Any(SyntaxKind.PublicKeyword) && !modifiers.Any(SyntaxKind.InternalKeyword))
@@ -69,9 +72,10 @@ public class UnionGenerator : IIncrementalGenerator
 
 			candidateMembers.Add(new UnionMemberToGenerate(
 				recordMember.Identifier.Text,
-				string.Join(" ", modifiers),
+				string.Join(" ", modifiers.RearrangeKeywords()),
 				constructor,
-				ExtractTypeParameters(recordMember)));
+				ExtractTypeParameters(recordMember))
+			);
 		}
 
 		EquatableArray<UnionMemberToGenerate> members = candidateMembers.ToImmutableArray();
@@ -79,9 +83,10 @@ public class UnionGenerator : IIncrementalGenerator
 		return new UnionToGenerate(
 			context.TargetSymbol.ContainingNamespace.ToDisplayString(),
 			context.TargetSymbol.Name,
+			string.Join(" ", candidate.Modifiers),
 			members,
-			candidate.Modifiers,
-			ExtractTypeParameters(candidate));
+			ExtractTypeParameters(candidate)
+		);
 	}
 
 	private static ImmutableArray<string> ExtractTypeParameters(RecordDeclarationSyntax recordMember)

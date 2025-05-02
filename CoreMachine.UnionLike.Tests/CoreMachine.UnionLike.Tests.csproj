@@ -27,7 +27,12 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\CoreMachine.UnionLike.Attributes\CoreMachine.UnionLike.Attributes.csproj" />
         <ProjectReference Include="..\CoreMachine.UnionLike\CoreMachine.UnionLike.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Snapshots\" />
     </ItemGroup>
 
 </Project>

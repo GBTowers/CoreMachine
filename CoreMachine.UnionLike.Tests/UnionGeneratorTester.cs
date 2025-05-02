@@ -1,3 +1,4 @@
+using CoreMachine.UnionLike.Attributes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
@@ -11,7 +12,8 @@ public static class UnionGeneratorTester
 
 		IEnumerable<PortableExecutableReference> references =
 		[
-			MetadataReference.CreateFromFile(typeof(object).Assembly.Location)
+			MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
+			MetadataReference.CreateFromFile(typeof(UnionAttribute).Assembly.Location)
 		];
 
 		var compilation = CSharpCompilation.Create(
@@ -19,15 +21,8 @@ public static class UnionGeneratorTester
 			[syntaxTree],
 			references);
 
-		var generator = new UnionGenerator();
+		GeneratorDriver driver = CSharpGeneratorDriver.Create(new UnionGenerator());
 
-		GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
-
-		driver = driver.RunGenerators(compilation);
-
-		var settings = new VerifySettings();
-		settings.UseUniqueDirectory();
-
-		return Verifier.Verify(driver, settings).UseDirectory("Snapshots");
+		return Verifier.Verify(driver.RunGenerators(compilation)).UseDirectory("Snapshots").UseUniqueDirectory();
 	}
 }

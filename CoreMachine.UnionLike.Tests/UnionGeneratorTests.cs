@@ -22,27 +22,7 @@ public class UnionGeneratorTests
 
 		return UnionGeneratorTester.Verify(code);
 	}
-
-	[Fact]
-	public Task GeneratesUnionAttributeUnconditionally()
-	{
-		const string code = """
-		                    using System;
-		                    using CoreMachine.UnionLike.Attributes;
-
-		                    namespace Tests;
-
-		                    public partial record ApiResult
-		                    {
-		                        partial record Ok;
-		                    }    
-
-		                    """;
-
-
-		return UnionGeneratorTester.Verify(code);
-	}
-
+	
 	[Fact]
 	public Task HandlesBaseClassGenericParameters()
 	{

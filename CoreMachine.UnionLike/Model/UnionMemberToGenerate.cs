@@ -1,4 +1,5 @@
 using CoreMachine.UnionLike.Data;
+using CoreMachine.UnionLike.Extensions;
 
 namespace CoreMachine.UnionLike.Model;
 

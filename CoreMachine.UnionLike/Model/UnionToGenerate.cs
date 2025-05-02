@@ -1,13 +1,13 @@
 using CoreMachine.UnionLike.Data;
-using Microsoft.CodeAnalysis;
+using CoreMachine.UnionLike.Extensions;
 
 namespace CoreMachine.UnionLike.Model;
 
 public sealed record UnionToGenerate(
 	string Namespace,
 	string Name,
+	string Modifiers,
 	EquatableArray<UnionMemberToGenerate> Members,
-	SyntaxTokenList Modifiers,
 	EquatableArray<string> TypeParameters
 )
 {
