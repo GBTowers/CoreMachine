@@ -11,6 +11,6 @@ public sealed record UnionToGenerate(
 	EquatableArray<string> TypeParameters
 )
 {
-	public string GenericDeclaration => TypeParameters.JoinString();
-	public string FullName => Name + (string.IsNullOrWhiteSpace(GenericDeclaration) ? "" : $"<{GenericDeclaration}>");
+	public string GenericDeclaration => TypeParameters.JoinString() is not {Length: > 0} parameters ? "" : $"<{parameters}>";
+	public string FullName => Name + GenericDeclaration;
 }

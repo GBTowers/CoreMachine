@@ -22,8 +22,8 @@ public class UnionIntegration
 	[Fact]
 	public void MatchMethodWorksOnDerivedClasses()
 	{
-		var result = new Result<int, string>.Ok(4);
-
+		Result<int, string> result = 4;
+		
 		string s = result.Match(
 			success => success.Value.ToString(),
 			failure => failure.Error);

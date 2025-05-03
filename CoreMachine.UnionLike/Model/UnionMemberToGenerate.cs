@@ -9,7 +9,7 @@ public sealed record UnionMemberToGenerate(
 	RecordConstructor? Constructor,
 	EquatableArray<string> TypeParameters)
 {
-	public string VariableName => Name.ToLower();
+	public string VariableName => Name.FirstCharToLower() ?? throw new InvalidOperationException();
 
 	public string TupleConstructor => Constructor is not null && Constructor.Parameters.Any()
 		? Enumerable.Range(1, Constructor.Parameters.Count())
