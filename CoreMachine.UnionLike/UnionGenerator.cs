@@ -12,8 +12,7 @@ namespace CoreMachine.UnionLike;
 [Generator]
 public class UnionGenerator : IIncrementalGenerator
 {
-	private const string FullyQualifiedAttributeName = "CoreMachine.UnionLike.Attributes.UnionAttribute"; 
-	
+	private const string FullyQualifiedAttributeName = "CoreMachine.UnionLike.Attributes.UnionAttribute";
 	
 	public void Initialize(IncrementalGeneratorInitializationContext context)
 	{

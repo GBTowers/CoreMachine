@@ -8,6 +8,11 @@
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageId>UnionLike</PackageId>
+        <Authors>CoreMachine</Authors>
+        <Company>CoreMachine</Company>
+        <Product>UnionLike</Product>
     </PropertyGroup>
 
     <ItemGroup>
@@ -28,13 +33,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <!-- Pack the generator dll in the analyzers/dotnet/cs path -->
         <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
-
-        <!-- Pack the attributes dll in the analyzers/dotnet/cs path -->
         <None Include="$(OutputPath)\CoreMachine.UnionLike.Attributes.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
-
-        <!-- Pack the attributes dll in the lib\netstandard2.0 path -->
         <None Include="$(OutputPath)\CoreMachine.UnionLike.Attributes.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="true"/>
     </ItemGroup>
 

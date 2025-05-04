@@ -11,6 +11,8 @@ public sealed record UnionToGenerate(
 	EquatableArray<string> TypeParameters
 )
 {
-	public string GenericDeclaration => TypeParameters.JoinString() is not {Length: > 0} parameters ? "" : $"<{parameters}>";
+	public string GenericDeclaration =>
+		TypeParameters.JoinString() is not { Length: > 0 } parameters ? "" : $"<{parameters}>";
+
 	public string FullName => Name + GenericDeclaration;
 }

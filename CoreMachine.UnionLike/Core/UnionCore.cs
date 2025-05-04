@@ -76,7 +76,7 @@ public static class UnionCore
 		}
 
 		if (canAddImplicitOperators)
-			foreach ((string tuple, UnionMemberToGenerate member) in distinctMembers)
+			foreach ((string tuple, var member) in distinctMembers)
 			{
 				if (member.Constructor is null)
 					continue;
@@ -116,9 +116,7 @@ public static class UnionCore
 		writer.WriteLine($"this Task<{unionModel.FullName}> task,");
 
 		foreach (var member in unionModel.Members)
-		{
 			writer.WriteLine($"Func<{member.FullName(unionModel.FullName)}, TOut> {member.VariableName},");
-		}
 
 		writer.WriteLine("bool continueOnCapturedContext = false)");
 		writer.WriteLine("=> (await task.ConfigureAwait(continueOnCapturedContext))");
@@ -132,9 +130,7 @@ public static class UnionCore
 		writer.WriteLine($"this Task<{unionModel.FullName}> task,");
 
 		foreach (var member in unionModel.Members)
-		{
 			writer.WriteLine($"Func<{member.FullName(unionModel.FullName)}, Task<TOut>> {member.VariableName},");
-		}
 
 		writer.WriteLine("bool continueOnCapturedContext = false)");
 		writer.WriteLine("=> await (await task.ConfigureAwait(continueOnCapturedContext))");
@@ -150,9 +146,7 @@ public static class UnionCore
 		writer.WriteLine($"this Task<{unionModel.FullName}> task,");
 
 		foreach (var member in unionModel.Members)
-		{
 			writer.WriteLine($"Action<{member.FullName(unionModel.FullName)}> {member.VariableName},");
-		}
 
 		writer.WriteLine("bool continueOnCapturedContext = false)");
 		writer.WriteLine("=> (await task.ConfigureAwait(continueOnCapturedContext))");
@@ -166,9 +160,7 @@ public static class UnionCore
 		writer.WriteLine($"this Task<{unionModel.FullName}> task,");
 
 		foreach (var member in unionModel.Members)
-		{
 			writer.WriteLine($"Func<{member.FullName(unionModel.FullName)}, Task> {member.VariableName},");
-		}
 
 		writer.WriteLine("bool continueOnCapturedContext = false)");
 		writer.WriteLine("=> await (await task.ConfigureAwait(continueOnCapturedContext))");

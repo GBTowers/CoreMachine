@@ -1,6 +1,5 @@
 using System.CodeDom.Compiler;
 using System.Collections.Immutable;
-using CoreMachine.UnionLike.Data;
 using CoreMachine.UnionLike.Extensions;
 using Microsoft.CodeAnalysis;
 

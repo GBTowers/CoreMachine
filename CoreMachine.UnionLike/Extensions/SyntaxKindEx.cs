@@ -13,6 +13,6 @@ public static class SyntaxKindEx
 			or SyntaxKind.InternalKeyword
 			or SyntaxKind.FileKeyword;
 
-	public static SyntaxTokenList RearrangeKeywords(this SyntaxTokenList source) 
+	public static SyntaxTokenList RearrangeKeywords(this SyntaxTokenList source)
 		=> new(source.OrderByDescending(token => token.Kind().IsAccessModifier()));
 }
