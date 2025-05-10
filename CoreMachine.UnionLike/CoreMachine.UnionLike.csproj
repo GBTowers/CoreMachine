@@ -15,6 +15,15 @@
         <Product>UnionLike</Product>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0">
             <PrivateAssets>all</PrivateAssets>

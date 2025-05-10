@@ -14,5 +14,8 @@ public sealed record UnionToGenerate(
 	public string GenericDeclaration =>
 		TypeParameters.JoinString() is not { Length: > 0 } parameters ? "" : $"<{parameters}>";
 
+	public string UnionDeclaration =>
+		$"Union<{FullName}, {Members.JoinSelect(m => m.FullName)}>";
+	
 	public string FullName => Name + GenericDeclaration;
 }

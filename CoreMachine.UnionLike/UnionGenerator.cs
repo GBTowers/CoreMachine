@@ -13,7 +13,7 @@ namespace CoreMachine.UnionLike;
 public class UnionGenerator : IIncrementalGenerator
 {
 	private const string FullyQualifiedAttributeName = "CoreMachine.UnionLike.Attributes.UnionAttribute";
-	
+
 	public void Initialize(IncrementalGeneratorInitializationContext context)
 	{
 		IncrementalValuesProvider<UnionToGenerate> pipeline = context
@@ -21,13 +21,16 @@ public class UnionGenerator : IIncrementalGenerator
 			.ForAttributeWithMetadataName(FullyQualifiedAttributeName,
 				SyntaxPredicate,
 				SemanticTransform)
-			.Where(u => u is not null)!;
+			.Where(u => u is not null)
+			.Where(u => u?.Members.Any() == true)!;
 
-		IncrementalValueProvider<ImmutableArray<int>> arities = pipeline.Collect()
-			.Select((u, _)
-				=> u.Select(x => x.Members.Count()).Distinct().ToImmutableArray());
+		IncrementalValuesProvider<int> arities = pipeline.Collect()
+			.SelectMany((u, _)
+				=> u.Select(x => x.Members.Count()).Distinct());
 
-		context.RegisterImplementationSourceOutput(arities, ArityCore.GenerateArities);
+		IncrementalValuesProvider<Union> unions = arities.Select((arity, _) => new Union(arity));
+
+		context.RegisterImplementationSourceOutput(unions, ArityCore.GenerateArity);
 
 		context.RegisterImplementationSourceOutput(pipeline, UnionCore.BuildUnion);
 	}
@@ -38,15 +41,19 @@ public class UnionGenerator : IIncrementalGenerator
 	{
 		if (context.TargetNode is not RecordDeclarationSyntax candidate) return null;
 
+		string candidateGenericDeclaration = ExtractTypeParameters(candidate)
+			.JoinString() is not { Length: > 0 } typeParams
+			? ""
+			: $"<{typeParams}>";
 
 		List<UnionMemberToGenerate> candidateMembers = [];
 
 		foreach (var member in candidate.Members)
 		{
-			if (member is not RecordDeclarationSyntax recordMember
-			    || !recordMember.Modifiers.Any(SyntaxKind.PartialKeyword)
-			    || recordMember.Modifiers.Any(SyntaxKind.PrivateKeyword))
-				continue;
+			if (member is not RecordDeclarationSyntax recordMember) continue;
+			if (!recordMember.Modifiers.Any(SyntaxKind.PartialKeyword)) continue;
+			if (recordMember.Modifiers.Any(SyntaxKind.PrivateKeyword)) continue;
+			if (recordMember.TypeParameterList?.Parameters.Count > 0) continue;
 
 			RecordConstructor? constructor = null;
 			if (recordMember.ParameterList?.Parameters is { Count: > 0 } parameterList)
@@ -66,14 +73,13 @@ public class UnionGenerator : IIncrementalGenerator
 					SyntaxFactory.Token(SyntaxKind.SealedKeyword));
 
 			if (!modifiers.Any(SyntaxKind.PublicKeyword) && !modifiers.Any(SyntaxKind.InternalKeyword))
-				modifiers = modifiers.Insert(0,
-					SyntaxFactory.Token(SyntaxKind.PublicKeyword));
+				modifiers = modifiers.Insert(0, SyntaxFactory.Token(SyntaxKind.PublicKeyword));
 
 			candidateMembers.Add(new UnionMemberToGenerate(
 				recordMember.Identifier.Text,
+				context.TargetSymbol.Name + candidateGenericDeclaration,
 				string.Join(" ", modifiers.RearrangeKeywords()),
-				constructor,
-				ExtractTypeParameters(recordMember))
+				constructor)
 			);
 		}
 

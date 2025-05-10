@@ -15,7 +15,6 @@ public static class UnionCore
 		Dictionary<string, UnionMemberToGenerate> distinctMembers = [];
 		foreach (var member in unionModel.Members)
 		{
-			if (member.TypeParameters.Any()) continue;
 			if (member.Constructor?.Parameters.Any() != true) continue;
 
 			if (distinctMembers.ContainsKey(member.Constructor.TupleSignature))
@@ -55,24 +54,6 @@ public static class UnionCore
 		{
 			writer.WriteLine($"{member.Modifiers} record {member.Name} : {unionModel.FullName};");
 			writer.WriteLine();
-
-			string? outVar = member.Name.FirstCharToLower();
-			writer.WriteLine($"public bool Is{member.Name}([NotNullWhen(true)] out {member.Name}? {outVar})");
-			writer.WriteLine('{');
-			writer.Indent++;
-			writer.WriteLine($"if (this is {member.Name} val)");
-			writer.WriteLine('{');
-			writer.Indent++;
-			writer.WriteLine($"{outVar} = val;");
-			writer.WriteLine("return true;");
-			writer.Indent--;
-			writer.WriteLine('}');
-			writer.WriteLine();
-			writer.WriteLine($"{outVar} = default;");
-			writer.WriteLine("return false;");
-			writer.Indent--;
-			writer.WriteLine('}');
-			writer.WriteLine();
 		}
 
 		if (canAddImplicitOperators)
@@ -104,70 +85,31 @@ public static class UnionCore
 		writer.WriteLine();
 
 		// Extension methods
-		writer.WriteLine($"public static class {unionModel.Name}Ex");
+		writer.WriteLine($"public static class {unionModel.Name}UnionEx");
 		writer.WriteLine('{');
 		writer.Indent++;
 
-		string matchTypeParams = unionModel.TypeParameters.Prepend("TOut").JoinString();
-
-		// Match
-		writer.Write($"public static async Task<TOut> Match<{matchTypeParams}>(");
+		writer.Write($"public static Task<{unionModel.UnionDeclaration}> AsUnion{unionModel.GenericDeclaration}(");
+		writer.WriteLine($"this Task<{unionModel.FullName}> task)");
+		writer.WriteLine('{');
 		writer.Indent++;
-		writer.WriteLine($"this Task<{unionModel.FullName}> task,");
 
-		foreach (var member in unionModel.Members)
-			writer.WriteLine($"Func<{member.FullName(unionModel.FullName)}, TOut> {member.VariableName},");
-
-		writer.WriteLine("bool continueOnCapturedContext = false)");
-		writer.WriteLine("=> (await task.ConfigureAwait(continueOnCapturedContext))");
-		writer.WriteLine($".Match({unionModel.Members.JoinSelect(m => m.VariableName)});");
-		writer.Indent--;
-		writer.WriteLine();
-
-		// MatchAsync
-		writer.Write($"public static async Task<TOut> MatchAsync<{matchTypeParams}>(");
+		writer.WriteLine($"var tcs = new TaskCompletionSource<{unionModel.UnionDeclaration}>();");
+		writer.WriteLine("task.ContinueWith(t =>");
+		writer.WriteLine('{');
 		writer.Indent++;
-		writer.WriteLine($"this Task<{unionModel.FullName}> task,");
 
-		foreach (var member in unionModel.Members)
-			writer.WriteLine($"Func<{member.FullName(unionModel.FullName)}, Task<TOut>> {member.VariableName},");
+		writer.WriteLine("if (t.IsFaulted) tcs.TrySetException(t.Exception.InnerExceptions);");
+		writer.WriteLine("else if (t.IsCanceled) tcs.TrySetCanceled();");
+		writer.WriteLine("else tcs.TrySetResult(t.Result);");
 
-		writer.WriteLine("bool continueOnCapturedContext = false)");
-		writer.WriteLine("=> await (await task.ConfigureAwait(continueOnCapturedContext))");
-		writer.WriteLine($".MatchAsync({unionModel.Members.JoinSelect(m => m.VariableName)})");
-		writer.WriteLine(".ConfigureAwait(continueOnCapturedContext);");
 		writer.Indent--;
+		writer.WriteLine("}, TaskContinuationOptions.ExecuteSynchronously);");
 		writer.WriteLine();
+		writer.WriteLine("return tcs.Task;");
 
-
-		// Switch
-		writer.WriteLine($"public static async Task Switch{unionModel.GenericDeclaration}(");
-		writer.Indent++;
-		writer.WriteLine($"this Task<{unionModel.FullName}> task,");
-
-		foreach (var member in unionModel.Members)
-			writer.WriteLine($"Action<{member.FullName(unionModel.FullName)}> {member.VariableName},");
-
-		writer.WriteLine("bool continueOnCapturedContext = false)");
-		writer.WriteLine("=> (await task.ConfigureAwait(continueOnCapturedContext))");
-		writer.WriteLine($".Switch({unionModel.Members.JoinSelect(m => m.VariableName)});");
 		writer.Indent--;
-		writer.WriteLine();
-
-		// SwitchAsync
-		writer.WriteLine($"public static async Task SwitchAsync{unionModel.GenericDeclaration}(");
-		writer.Indent++;
-		writer.WriteLine($"this Task<{unionModel.FullName}> task,");
-
-		foreach (var member in unionModel.Members)
-			writer.WriteLine($"Func<{member.FullName(unionModel.FullName)}, Task> {member.VariableName},");
-
-		writer.WriteLine("bool continueOnCapturedContext = false)");
-		writer.WriteLine("=> await (await task.ConfigureAwait(continueOnCapturedContext))");
-		writer.WriteLine($".SwitchAsync({unionModel.Members.JoinSelect(m => m.VariableName)})");
-		writer.WriteLine(".ConfigureAwait(continueOnCapturedContext);");
-		writer.Indent--;
-		writer.WriteLine();
+		writer.WriteLine('}');
 
 		writer.Indent--;
 		writer.WriteLine('}');

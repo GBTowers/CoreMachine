@@ -5,15 +5,23 @@ namespace CoreMachine.UnionLike.Integration;
 [Union]
 public abstract partial record Notification
 {
-	partial record StatusNotification(string Message, int Code);
-	partial record PaymentNotification(decimal Amount, string Account);
+	partial record Hello<E, R>;
+	partial record Hello<T>;
+	partial record Bye;
 }
+
+
+
 
 public class Playground
 {
 	[Fact]
-	public void Play()
+	public async Task Play()
 	{
-		
+		Notification notification = new Notification.Bye();
+
+		var result = Task.FromResult("Hello");
+
+		var x =  notification.MatchAsync(async b => await result);
 	}
 }
