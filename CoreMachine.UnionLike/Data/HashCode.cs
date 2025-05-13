@@ -34,7 +34,7 @@ internal struct HashCode
 
 		RandomNumberGenerator.Create().GetBytes(bytes);
 
-		return BitConverter.ToUInt32(bytes, 0);
+		return BitConverter.ToUInt32(bytes, startIndex: 0);
 	}
 
 	/// <summary>
@@ -48,7 +48,12 @@ internal struct HashCode
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static void Initialize(out uint v1, out uint v2, out uint v3, out uint v4)
+	private static void Initialize(
+		out uint v1,
+		out uint v2,
+		out uint v3,
+		out uint v4
+	)
 	{
 		v1 = Seed + Prime1 + Prime2;
 		v2 = Seed + Prime2;
@@ -57,14 +62,20 @@ internal struct HashCode
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static uint Round(uint hash, uint input) => RotateLeft(hash + input * Prime2, 13) * Prime1;
+	private static uint Round(uint hash, uint input) => RotateLeft(hash + input * Prime2, offset: 13) * Prime1;
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static uint QueueRound(uint hash, uint queuedValue) => RotateLeft(hash + queuedValue * Prime3, 17) * Prime4;
+	private static uint QueueRound(uint hash, uint queuedValue)
+		=> RotateLeft(hash + queuedValue * Prime3, offset: 17) * Prime4;
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static uint MixState(uint v1, uint v2, uint v3, uint v4) =>
-		RotateLeft(v1, 1) + RotateLeft(v2, 7) + RotateLeft(v3, 12) + RotateLeft(v4, 18);
+	private static uint MixState(
+		uint v1,
+		uint v2,
+		uint v3,
+		uint v4
+	)
+		=> RotateLeft(v1, offset: 1) + RotateLeft(v2, offset: 7) + RotateLeft(v3, offset: 12) + RotateLeft(v4, offset: 18);
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static uint MixEmptyState() => Seed + Prime5;
@@ -89,18 +100,18 @@ internal struct HashCode
 
 		switch (position)
 		{
-			case 0:
-				_queue1 = val;
-				break;
-			case 1:
-				_queue2 = val;
-				break;
-			case 2:
-				_queue3 = val;
-				break;
+			case 0: _queue1 = val; break;
+			case 1: _queue2 = val; break;
+			case 2: _queue3 = val; break;
 			default:
 			{
-				if (previousLength == 3) Initialize(out _v1, out _v2, out _v3, out _v4);
+				if (previousLength == 3)
+					Initialize(
+						out _v1,
+						out _v2,
+						out _v3,
+						out _v4
+					);
 
 				_v1 = Round(_v1, _queue1);
 				_v2 = Round(_v2, _queue2);
@@ -119,7 +130,14 @@ internal struct HashCode
 	{
 		uint length = _length;
 		uint position = length % 4;
-		uint hash = length < 4 ? MixEmptyState() : MixState(_v1, _v2, _v3, _v4);
+		uint hash = length < 4
+			? MixEmptyState()
+			: MixState(
+				_v1,
+				_v2,
+				_v3,
+				_v4
+			);
 
 		hash += length * 4;
 
@@ -142,13 +160,14 @@ internal struct HashCode
 
 	/// <inheritdoc />
 	[Obsolete(
-		 "HashCode is a mutable struct and should not be compared with other HashCodes. Use ToHashCode to retrieve the computed hash code.",
-		 true), EditorBrowsable(EditorBrowsableState.Never)]
+		"HashCode is a mutable struct and should not be compared with other HashCodes. Use ToHashCode to retrieve the computed hash code.",
+		error: true
+	), EditorBrowsable(EditorBrowsableState.Never)]
 	public override int GetHashCode() => throw new NotSupportedException();
 
 	/// <inheritdoc />
-	[Obsolete("HashCode is a mutable struct and should not be compared with other HashCodes.", true),
-	 EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete("HashCode is a mutable struct and should not be compared with other HashCodes.", error: true),
+	EditorBrowsable(EditorBrowsableState.Never)]
 	public override bool Equals(object? obj) => throw new NotSupportedException();
 
 	/// <summary>

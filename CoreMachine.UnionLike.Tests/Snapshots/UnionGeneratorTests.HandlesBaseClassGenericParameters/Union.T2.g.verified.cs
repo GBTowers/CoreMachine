@@ -7,9 +7,7 @@ using System.Threading.Tasks;
 namespace CoreMachine.UnionLike;
 
 public abstract record Union<T, T1, T2>
-	where T : Union<T, T1, T2>
-	where T1 : T
-	where T2 : T
+	where T : Union<T, T1, T2> where T1 : T where T2 : T
 {
 	public TOut Match<TOut>(Func<T1, TOut> f1, Func<T2, TOut> f2) =>
 		this switch
@@ -20,6 +18,14 @@ public abstract record Union<T, T1, T2>
 		};
 	
 	public Task<TOut> MatchAsync<TOut>(Func<T1, Task<TOut>> f1, Func<T2, Task<TOut>> f2) =>
+		this switch
+		{
+			T1 t1 => f1(t1),
+			T2 t2 => f2(t2),
+			_ => throw new InvalidOperationException()
+		};
+	
+	public ValueTask<TOut> MatchAsyncValue<TOut>(Func<T1, ValueTask<TOut>> f1, Func<T2, ValueTask<TOut>> f2) =>
 		this switch
 		{
 			T1 t1 => f1(t1),
@@ -44,4 +50,13 @@ public abstract record Union<T, T1, T2>
 			_ => throw new InvalidOperationException()
 		};
 	
+	public ValueTask SwitchAsyncValue(Func<T1, ValueTask> a1, Func<T2, ValueTask> a2) =>
+		this switch
+		{
+			T1 t1 => a1(t1),
+			T2 t2 => a2(t2),
+			_ => throw new InvalidOperationException()
+		};
+	
 }
+

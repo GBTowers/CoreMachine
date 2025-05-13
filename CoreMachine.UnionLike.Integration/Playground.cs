@@ -1,3 +1,4 @@
+using System.Drawing;
 using CoreMachine.UnionLike.Attributes;
 
 namespace CoreMachine.UnionLike.Integration;
@@ -5,23 +6,27 @@ namespace CoreMachine.UnionLike.Integration;
 [Union]
 public abstract partial record Notification
 {
-	partial record Hello<E, R>;
-	partial record Hello<T>;
-	partial record Bye;
+	partial record Bye(Color Color);
 }
 
-
-
+public partial class Hello
+{
+	[Union]
+	public partial record Option<T>
+	{
+		partial record Some(T Value);
+		partial record None;
+	}
+}
 
 public class Playground
 {
 	[Fact]
-	public async Task Play()
+	public void Play()
 	{
-		Notification notification = new Notification.Bye();
-
+		Notification notification = new Notification.Bye(new Color());
 		var result = Task.FromResult("Hello");
 
-		var x =  notification.MatchAsync(async b => await result);
+		var x = notification.MatchAsync(async b => await result);
 	}
 }

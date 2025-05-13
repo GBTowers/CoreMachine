@@ -13,8 +13,8 @@ internal static class EquatableArray
 	/// <param name="array">The input <see cref="ImmutableArray{T}" /> instance.</param>
 	/// <returns>An <see cref="EquatableArray{T}" /> instance from a given <see cref="ImmutableArray{T}" />.</returns>
 	public static EquatableArray<T> AsEquatableArray<T>(this ImmutableArray<T> array)
-		where T : IEquatable<T> =>
-		new(array);
+		where T : IEquatable<T>
+		=> new(array);
 }
 
 /// <summary>
@@ -42,8 +42,7 @@ public readonly struct EquatableArray<T> : IEquatable<EquatableArray<T>>, IEnume
 	/// <returns>A reference to an item at a specified position within the array.</returns>
 	public ref readonly T this[int index]
 	{
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		get => ref AsImmutableArray().ItemRef(index);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)] get => ref AsImmutableArray().ItemRef(index);
 	}
 
 	/// <summary>
@@ -51,15 +50,15 @@ public readonly struct EquatableArray<T> : IEquatable<EquatableArray<T>>, IEnume
 	/// </summary>
 	public bool IsEmpty
 	{
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		get => AsImmutableArray().IsEmpty;
+		[MethodImpl(MethodImplOptions.AggressiveInlining)] get => AsImmutableArray().IsEmpty;
 	}
 
 	/// <sinheritdoc />
 	public bool Equals(EquatableArray<T> array) => AsImmutableArray().SequenceEqual(array.AsImmutableArray());
 
 	/// <sinheritdoc />
-	public override bool Equals([NotNullWhen(true)] object? obj) => obj is EquatableArray<T> array && Equals(this, array);
+	public override bool Equals([NotNullWhen(returnValue: true)] object? obj)
+		=> obj is EquatableArray<T> array && Equals(this, array);
 
 	/// <sinheritdoc />
 	public override int GetHashCode()

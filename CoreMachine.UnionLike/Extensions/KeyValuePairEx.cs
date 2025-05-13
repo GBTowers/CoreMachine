@@ -5,11 +5,12 @@ namespace CoreMachine.UnionLike.Extensions;
 public static class KeyValuePairEx
 {
 	public static void Deconstruct(
-		this KeyValuePair<string, UnionMemberToGenerate> memberGroup,
+		this KeyValuePair<string, UnionTargetMember> memberGroup,
 		out string tuple,
-		out UnionMemberToGenerate member)
+		out UnionTargetMember targetMember
+	)
 	{
 		tuple = memberGroup.Key;
-		member = memberGroup.Value;
+		targetMember = memberGroup.Value;
 	}
 }

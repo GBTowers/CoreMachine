@@ -3,16 +3,14 @@ using CoreMachine.UnionLike.Extensions;
 
 namespace CoreMachine.UnionLike.Model;
 
-public sealed record UnionMemberToGenerate(
-	string Name,
-	string ParentName,
-	string Modifiers,
-	RecordConstructor? Constructor)
+public sealed record UnionTargetMember(string Name, string ParentName, string Modifiers, RecordConstructor? Constructor)
 {
-	public string TupleConstructor => Constructor is not null && Constructor.Parameters.Any()
-		? Enumerable.Range(1, Constructor.Parameters.Count())
-			.JoinSelect(i => $"tuple.Item{i}")
-		: "";
+	public string TupleConstructor
+		=> Constructor is not null && Constructor.Parameters.Any()
+			? Enumerable.Range(start: 1, Constructor.Parameters.Count()).JoinSelect(i => $"tuple.Item{i}")
+			: "";
+
+	public string VariableName => Name.FirstCharToLower()!;
 
 	public string FullName => ParentName + '.' + Name;
 }

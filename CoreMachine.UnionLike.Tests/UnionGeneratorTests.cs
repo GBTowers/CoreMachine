@@ -45,6 +45,30 @@ public class UnionGeneratorTests
 
 		return UnionGeneratorTester.Verify(code);
 	}
+
+	[Fact]
+	public Task HandlesParentClass()
+	{
+		const string code =
+			"""
+			using System;
+			using CoreMachine.UnionLike.Attributes;
+			
+			namespace Tests;
+			
+			public partial class Hello
+			{
+				[Union]
+				public partial record Option<T>
+				{
+					partial record Some(T Value);
+					partial record None;
+				}
+			}
+			""";
+
+		return UnionGeneratorTester.Verify(code);
+	}
 }
 
 public class VerifyChecksTests
