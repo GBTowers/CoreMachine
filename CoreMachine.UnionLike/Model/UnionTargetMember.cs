@@ -1,13 +1,17 @@
-using CoreMachine.UnionLike.Data;
 using CoreMachine.UnionLike.Extensions;
+using CoreMachine.UnionLike.Data;
 
 namespace CoreMachine.UnionLike.Model;
 
-public sealed record UnionTargetMember(string Name, string ParentName, string Modifiers, RecordConstructor? Constructor)
+public sealed record UnionTargetMember(
+	string Name,
+	string ParentName,
+	RecordConstructor? Constructor
+)
 {
 	public string TupleConstructor
 		=> Constructor is not null && Constructor.Parameters.Any()
-			? Enumerable.Range(start: 1, Constructor.Parameters.Count()).JoinSelect(i => $"tuple.Item{i}")
+			? Enumerable.Range(start: 1, count: Constructor.Parameters.Count()).JoinSelect(i => $"tuple.Item{i}")
 			: "";
 
 	public string VariableName => Name.FirstCharToLower()!;

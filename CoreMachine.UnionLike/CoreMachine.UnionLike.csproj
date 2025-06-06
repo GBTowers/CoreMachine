@@ -10,9 +10,10 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageId>UnionLike</PackageId>
-		<Authors>CoreMachine</Authors>
+		<Authors>GBTowers</Authors>
 		<Company>CoreMachine</Company>
 		<Product>UnionLike</Product>
+		<Version>2.0.0</Version>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -25,11 +26,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0">
+		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="4.14.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.13.0"/>
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0"/>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -38,14 +39,27 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\CoreMachine.UnionLike.Analyzers\CoreMachine.UnionLike.Analyzers\CoreMachine.UnionLike.Analyzers.csproj" PrivateAssets="All"/>
 		<ProjectReference Include="..\CoreMachine.UnionLike.Attributes\CoreMachine.UnionLike.Attributes.csproj" PrivateAssets="All"/>
-		<None Update="CoreMachine.UnionLike.props" Visible="false" Pack="true" PackagePath="build"/>
+		<None Update="UnionLike.props" Visible="false" Pack="true" PackagePath="build"/>
+		<ProjectReference Include="..\CoreMachine.UnionLIke.CodeFixes\CoreMachine.UnionLIke.CodeFixes.csproj" PrivateAssets="All"/>
 	</ItemGroup>
 
 	<ItemGroup>
 		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
 		<None Include="$(OutputPath)\CoreMachine.UnionLike.Attributes.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
 		<None Include="$(OutputPath)\CoreMachine.UnionLike.Attributes.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="true"/>
+
+		<None Include="$(OutputPath)\CoreMachine.UnionLike.Analyzers.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+		<None Include="$(OutputPath)\CoreMachine.UnionLike.Analyzers.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="true"/>
+
+		<None Include="$(OutputPath)\CoreMachine.UnionLike.CodeFixes.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+		<None Include="$(OutputPath)\CoreMachine.UnionLike.CodeFixes.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="true"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="bin\"/>
+		<Folder Include="bin\Release\netstandard2.0\"/>
 	</ItemGroup>
 
 </Project>

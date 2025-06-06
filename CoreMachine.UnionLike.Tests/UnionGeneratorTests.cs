@@ -6,28 +6,27 @@ public class UnionGeneratorTests
 	public Task GeneratesPartialClassWhenAttributeIsPresent()
 	{
 		const string code = """
-		                    using System;
-		                    using CoreMachine.UnionLike.Attributes;
+			using System;
+			using CoreMachine.UnionLike.Attributes;
 
-		                    namespace Tests;
+			namespace Tests;
 
-		                    [Union]
-		                    public partial record ApiResult
-		                    {
-		                        partial record Ok(string Message);
-		                        partial record BadRequest(string Message);
-		                    }
+			[Union]
+			public partial record ApiResult
+			{
+			    partial record Ok(string Message);
+			    partial record BadRequest(string Message);
+			}
 
-		                    """;
+			""";
 
 		return UnionGeneratorTester.Verify(code);
 	}
-	
+
 	[Fact]
 	public Task HandlesBaseClassGenericParameters()
 	{
-		const string code =
-			"""
+		const string code = """
 			using System;
 			using CoreMachine.UnionLike.Attributes;
 
@@ -49,13 +48,12 @@ public class UnionGeneratorTests
 	[Fact]
 	public Task HandlesParentClass()
 	{
-		const string code =
-			"""
+		const string code = """
 			using System;
 			using CoreMachine.UnionLike.Attributes;
-			
+
 			namespace Tests;
-			
+
 			public partial class Hello
 			{
 				[Union]

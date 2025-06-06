@@ -106,12 +106,8 @@ public abstract record Result<T, TE>
 	{
 		switch (this)
 		{
-			case Ok(var value):
-				ok(value);
-				break;
-			case Err(var error):
-				err(error);
-				break;
+			case Ok(var value): ok(value); break;
+			case Err(var error): err(error); break;
 		}
 	}
 
@@ -204,7 +200,8 @@ public abstract record Result<T, TE>
 	/// </returns>
 	public async Task<Result<T, TNew>> MapErrorAsync<TNew>(
 		Func<TE, Task<TNew>> next,
-		bool continueOnCapturedContext = false)
+		bool continueOnCapturedContext = false
+	)
 	{
 		return this switch
 		{
@@ -284,8 +281,7 @@ public abstract record Result<T, TE>
 	/// <returns>
 	///   A <see cref="Task{TResult}" /> containing a new <see cref="Result{T,TE}" /> with the new error type
 	/// </returns>
-	public Task<Result<T, TNewError>> BindErrorAsync<TNewError>(
-		Func<TE, Task<Result<T, TNewError>>> next)
+	public Task<Result<T, TNewError>> BindErrorAsync<TNewError>(Func<TE, Task<Result<T, TNewError>>> next)
 	{
 		return this switch
 		{

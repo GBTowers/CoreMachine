@@ -2,17 +2,19 @@ using CoreMachine.UnionLike.Extensions;
 
 namespace CoreMachine.UnionLike.Model;
 
-public record Union(int Arity)
+public record FakeUnion(int Arity)
 {
-	public ArityMember[] ArityMembers { get; } = Enumerable.Range(start: 1, Arity)
-	.Select(i => new ArityMember(i))
-	.ToArray();
+	public ArityMember[] ArityMembers { get; } = Arity <= 0
+		? []
+		: Enumerable.Range(start: 1, count: Arity).Select(i => new ArityMember(i)).ToArray();
 
-	public string TypeParameters => $"T, {ArityMembers.JoinSelect(m => m.Name)}";
-	public string Declaration => nameof(Union) + '<' + TypeParameters + '>';
+	private const char BaseTypeParameter = 'T';
+	private string TypeParameters => ArityMembers.Select(m => m.Name).Prepend(BaseTypeParameter.ToString()).JoinString();
+	public string Declaration => "Union" + '<' + TypeParameters + '>';
 	public string MatchTypeParams => "TOut, " + TypeParameters;
 
-	public string WhereClauses => $"where T : {Declaration} " + ArityMembers.JoinSelect(m => $"where {m.Name} : T", " ");
+	public string WhereClauses
+		=> $"where T : {Declaration} " + ArityMembers.JoinSelect(m => $"where {m.Name} : T", separator: " ");
 }
 
 public record ArityMember(int Arity)

@@ -1,33 +1,25 @@
 using System.Collections;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace CoreMachine.UnionLike.Data;
-
-internal static class EquatableArray
-{
-	/// <summary>
-	///   Creates an <see cref="EquatableArray{T}" /> instance from a given <see cref="ImmutableArray" />.
-	/// </summary>
-	/// <typeparam name="T">The type of items in the input array.</typeparam>
-	/// <param name="array">The input <see cref="ImmutableArray{T}" /> instance.</param>
-	/// <returns>An <see cref="EquatableArray{T}" /> instance from a given <see cref="ImmutableArray{T}" />.</returns>
-	public static EquatableArray<T> AsEquatableArray<T>(this ImmutableArray<T> array)
-		where T : IEquatable<T>
-		=> new(array);
-}
 
 /// <summary>
 ///   An imutable, equatable array. This is equivalent to <see cref="ImmutableArray{T}" /> but with value equality support.
 /// </summary>
 /// <typeparam name="T">The type of values in the array.</typeparam>
+[SuppressMessage(category: "ReSharper", checkId: "UnusedMember.Global"),
+SuppressMessage(category: "ReSharper", checkId: "MemberCanBePrivate.Global")]
 public readonly struct EquatableArray<T> : IEquatable<EquatableArray<T>>, IEnumerable<T>
-	where T : IEquatable<T>?
+where T : IEquatable<T>?
 {
 	/// <summary>
 	///   The underlying <typeparamref name="T" /> array.
 	/// </summary>
 	private readonly T[]? _array;
+
+	public int Length => _array?.Length ?? 0;
 
 	/// <summary>
 	///   Creates a new <see cref="EquatableArray{T}" /> instance.
@@ -58,16 +50,16 @@ public readonly struct EquatableArray<T> : IEquatable<EquatableArray<T>>, IEnume
 
 	/// <sinheritdoc />
 	public override bool Equals([NotNullWhen(returnValue: true)] object? obj)
-		=> obj is EquatableArray<T> array && Equals(this, array);
+		=> obj is EquatableArray<T> array && Equals(objA: this, objB: array);
 
 	/// <sinheritdoc />
 	public override int GetHashCode()
 	{
-		if (_array is not { } array) return 0;
+		if (_array is not {} array) return 0;
 
 		HashCode hashCode = default;
 
-		foreach (var item in array) hashCode.Add(item);
+		foreach (T item in array) hashCode.Add(item);
 
 		return hashCode.ToHashCode();
 	}
@@ -104,10 +96,10 @@ public readonly struct EquatableArray<T> : IEquatable<EquatableArray<T>>, IEnume
 	/// <returns>An <see cref="ImmutableArray{T}.Enumerator" /> value to traverse items in the current array.</returns>
 	public ImmutableArray<T>.Enumerator GetEnumerator() => AsImmutableArray().GetEnumerator();
 
-	/// <sinheritdoc />
+	/// <inheritdoc />
 	IEnumerator<T> IEnumerable<T>.GetEnumerator() => ((IEnumerable<T>)AsImmutableArray()).GetEnumerator();
 
-	/// <sinheritdoc />
+	/// <inheritdoc />
 	IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)AsImmutableArray()).GetEnumerator();
 
 	/// <summary>

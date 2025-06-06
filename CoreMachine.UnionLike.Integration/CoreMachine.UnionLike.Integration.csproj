@@ -8,9 +8,9 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<AsyncUnionExtensions>enable</AsyncUnionExtensions>
+		<AsyncUnionExtensions>disable</AsyncUnionExtensions>
 	</PropertyGroup>
-	
+
 	<ItemGroup>
 		<CompilerVisibleProperty Include="AsyncUnionExtensions"/>
 	</ItemGroup>
@@ -18,6 +18,7 @@
 	<ItemGroup>
 		<PackageReference Include="coverlet.collector" Version="6.0.2"/>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0"/>
+		<PackageReference Include="UnionLike" Version="2.0.0" />
 		<PackageReference Include="xunit" Version="2.9.2"/>
 		<PackageReference Include="xunit.runner.visualstudio" Version="2.8.2"/>
 	</ItemGroup>
@@ -26,11 +27,5 @@
 		<Using Include="Xunit"/>
 	</ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\CoreMachine.UnionLike.Attributes\CoreMachine.UnionLike.Attributes.csproj"
-											OutputItemType="Analyzer" ReferenceOutputAssembly="true"/>
-		<ProjectReference Include="..\CoreMachine.UnionLike\CoreMachine.UnionLike.csproj"
-											OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
-	</ItemGroup>
 
 </Project>

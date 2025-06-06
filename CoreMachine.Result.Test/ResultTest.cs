@@ -13,19 +13,21 @@ public class ResultTest
 	public void AssertReturnsDifferentErrors()
 	{
 		Result<string, string> beforeAssert = Result.Err<string, string>("before assert")
-			.Assert(val => val.StartsWith("Hello!"), "This should not be reached");
+			.Assert(assert: val => val.StartsWith("Hello!"), error: "This should not be reached");
+
 		Result<string, string> afterAssert = Result.Ok<string, string>("This is ok")
-			.Assert(val => val.StartsWith("Hello!"), "after assert");
+			.Assert(assert: val => val.StartsWith("Hello!"), error: "after assert");
 
-		string beforeResult = beforeAssert.Match(ok => ok, err => err);
-		string afterResult = afterAssert.Match(ok => ok, err => err);
+		string beforeResult = beforeAssert.Match(ok: ok => ok, err: err => err);
+		string afterResult = afterAssert.Match(ok: ok => ok, err: err => err);
 
-		Assert.Equal("before assert", beforeResult);
-		Assert.Equal("after assert", afterResult);
+		Assert.Equal(expected: "before assert", actual: beforeResult);
+		Assert.Equal(expected: "after assert", actual: afterResult);
 
-		Result<int, string> result = Result.Ok<int, string>(5).Assert(ok => ok > 10, "Result is lower than 10");
+		Result<int, string> result = Result.Ok<int, string>(5)
+			.Assert(assert: ok => ok > 10, error: "Result is lower than 10");
 
 		_ = "Hello!".ValueOr(new { Error = "Value is null" });
-		Assert.Equal("Result is lower than 10", result);
+		Assert.Equal(expected: "Result is lower than 10", actual: result);
 	}
 }

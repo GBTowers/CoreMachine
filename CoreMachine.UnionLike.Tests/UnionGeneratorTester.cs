@@ -1,4 +1,5 @@
 using CoreMachine.UnionLike.Attributes;
+using CoreMachine.UnionLike;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
@@ -8,7 +9,7 @@ public static class UnionGeneratorTester
 {
 	public static Task Verify(string source)
 	{
-		var syntaxTree = CSharpSyntaxTree.ParseText(source);
+		SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(source);
 
 		IEnumerable<PortableExecutableReference> references =
 		[
@@ -17,9 +18,10 @@ public static class UnionGeneratorTester
 		];
 
 		var compilation = CSharpCompilation.Create(
-			"Tests",
-			[syntaxTree],
-			references);
+			assemblyName: "Tests",
+			syntaxTrees: [syntaxTree],
+			references: references
+		);
 
 		GeneratorDriver driver = CSharpGeneratorDriver.Create(new UnionGenerator());
 

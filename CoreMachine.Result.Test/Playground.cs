@@ -7,10 +7,10 @@ public class Playground
 	{
 		Result<int, string> result = Result.Ok<int, string>(5);
 
-		if (result is IOk<int>(var num)) Assert.Equal(10, num + 5);
+		if (result is IOk<int>(var num)) Assert.Equal(expected: 10, actual: num + 5);
 
 		Result<int, string> errorResult = Result.Err<int, string>("This is an error");
-		if (errorResult is IErr<string>(var error)) Assert.Equal("This is an error", error);
+		if (errorResult is IErr<string>(var error)) Assert.Equal(expected: "This is an error", actual: error);
 
 		string match = result switch
 		{
@@ -19,11 +19,9 @@ public class Playground
 			_ => throw new InvalidOperationException()
 		};
 
-		string match2 = result.Match(
-			ok => $"Value is {ok}",
-			err => err);
+		string match2 = result.Match(ok: ok => $"Value is {ok}", err: err => err);
 
-		Assert.Equal("Value is 5", match);
-		Assert.Equal("Value is 5", match2);
+		Assert.Equal(expected: "Value is 5", actual: match);
+		Assert.Equal(expected: "Value is 5", actual: match2);
 	}
 }

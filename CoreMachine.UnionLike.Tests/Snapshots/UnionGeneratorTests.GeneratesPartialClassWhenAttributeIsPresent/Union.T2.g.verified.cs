@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace CoreMachine.UnionLike;
 
-public abstract record Union<T, T1, T2>
+[global::System.CodeDom.Compiler.GeneratedCodeAttribute("CoreMachine.UnionLike", "1.0.0")]
+public abstract record Union<T, T1, T2> : Union
 	where T : Union<T, T1, T2> where T1 : T where T2 : T
 {
 	public TOut Match<TOut>(Func<T1, TOut> f1, Func<T2, TOut> f2) =>

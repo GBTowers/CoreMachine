@@ -1,12 +1,11 @@
-using CoreMachine.UnionLike.Data;
 using CoreMachine.UnionLike.Extensions;
+using CoreMachine.UnionLike.Data;
 
 namespace CoreMachine.UnionLike.Model;
 
 public sealed record UnionTarget(
 	string Namespace,
 	string Name,
-	string Modifiers,
 	EquatableArray<UnionTargetMember> Members,
 	EquatableArray<string> TypeParameters,
 	bool GenerateAsyncExtensions,

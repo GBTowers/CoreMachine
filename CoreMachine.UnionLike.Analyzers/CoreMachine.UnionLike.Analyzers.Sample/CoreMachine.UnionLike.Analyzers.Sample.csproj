@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\CoreMachine.UnionLike.Attributes\CoreMachine.UnionLike.Attributes.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
+		
+		<ProjectReference Include="..\..\CoreMachine.UnionLike\CoreMachine.UnionLike.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\CoreMachine.UnionLike.Analyzers\CoreMachine.UnionLike.Analyzers.csproj"
+											OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
+		<ProjectReference Include="..\..\CoreMachine.UnionLIke.CodeFixes\CoreMachine.UnionLIke.CodeFixes.csproj"
+											OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
+	</ItemGroup>
+
+</Project>

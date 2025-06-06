@@ -43,11 +43,11 @@ public class Req
 
 	public static Req New(HttpMethod method) => new(method);
 
-	#region Body
+#region Body
 
 	public Req WithJsonBody<T>(T body, JsonSerializerOptions? serializerOptions = null)
 	{
-		string json = JsonSerializer.Serialize(body, serializerOptions);
+		string json = JsonSerializer.Serialize(value: body, options: serializerOptions);
 		_request.Content = new StringContent(json);
 		return this;
 	}
@@ -66,45 +66,47 @@ public class Req
 		using var xmlWriter = new XmlTextWriter(stringWriter);
 		xmlWriter.Formatting = Formatting.Indented;
 
-		serializer.Serialize(xmlWriter, body);
+		serializer.Serialize(xmlWriter: xmlWriter, o: body);
 
 		_request.Content = new StringContent(stringWriter.ToString());
 		return this;
 	}
 
-	#endregion
+#endregion
 
-	#region Headers
+#region Headers
 
 	public Req WithHeaders(object obj)
 	{
 		_request.Headers.Clear();
-		foreach ((string key, object value) in obj.ToKeyValuePairs()) _request.Headers.Add(key, value.ToInvariantString());
+		foreach ((string key, object value) in obj.ToKeyValuePairs())
+			_request.Headers.Add(name: key, value: value.ToInvariantString());
+
 		return this;
 	}
 
 	public Req AddHeader(string key, string value)
 	{
-		_request.Headers.Add(key, value);
+		_request.Headers.Add(name: key, value: value);
 		return this;
 	}
 
 	public Req WithBasicAuth(string username, string password)
 	{
 		string encoded = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
-		_request.Headers.Add("Authorization", encoded);
+		_request.Headers.Add(name: "Authorization", value: encoded);
 		return this;
 	}
 
 	public Req WithBearerToken(string token)
 	{
-		_request.Headers.Add("Authorization", $"Bearer {token}");
+		_request.Headers.Add(name: "Authorization", value: $"Bearer {token}");
 		return this;
 	}
 
-	#endregion
+#endregion
 
-	#region Url
+#region Url
 
 	public Req AppendSegment(string segment)
 	{
@@ -127,13 +129,13 @@ public class Req
 
 	public Req AddQueryParam(string key, object value)
 	{
-		_url.AppendQueryParam(key, value);
+		_url.AppendQueryParam(name: key, value: value);
 		return this;
 	}
 
 	public Req AppendQueryParam(string key, object value)
 	{
-		_url.AppendQueryParam(key, value);
+		_url.AppendQueryParam(name: key, value: value);
 		return this;
 	}
 
@@ -150,5 +152,5 @@ public class Req
 		return this;
 	}
 
-	#endregion
+#endregion
 }
