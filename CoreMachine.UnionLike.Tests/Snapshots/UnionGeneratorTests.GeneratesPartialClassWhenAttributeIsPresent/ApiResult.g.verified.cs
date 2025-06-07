@@ -7,7 +7,7 @@ using CoreMachine.UnionLike.Attributes;
 
 namespace Tests;
 
-public partial record ApiResult : Union<ApiResult, ApiResult.Ok, ApiResult.BadRequest>
+abstract partial record ApiResult : Union<ApiResult, ApiResult.Ok, ApiResult.BadRequest>
 {
 	private ApiResult() { }
 	

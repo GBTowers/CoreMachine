@@ -7,7 +7,7 @@ using CoreMachine.UnionLike.Attributes;
 
 namespace Tests;
 
-public partial record Result<T, TE> : Union<Result<T, TE>, Result<T, TE>.Ok, Result<T, TE>.Err>
+abstract partial record Result<T, TE> : Union<Result<T, TE>, Result<T, TE>.Ok, Result<T, TE>.Err>
 {
 	private Result() { }
 	

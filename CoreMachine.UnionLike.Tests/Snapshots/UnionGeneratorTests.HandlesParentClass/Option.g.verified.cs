@@ -9,7 +9,7 @@ namespace Tests;
 
 partial class Hello 
 {
-	public partial record Option<T> : Union<Option<T>, Option<T>.Some, Option<T>.None>
+	abstract partial record Option<T> : Union<Option<T>, Option<T>.Some, Option<T>.None>
 	{
 		private Option() { }
 		

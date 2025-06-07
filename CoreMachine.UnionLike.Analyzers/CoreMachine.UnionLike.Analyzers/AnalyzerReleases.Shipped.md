@@ -9,9 +9,9 @@
 | UL1003  | Union    | Error    | Union type cannot be sealed                      |
 | UL1004  | Union    | Error    | Union target cannot have base type               |
 | UL1005  | Union    | Error    | Union parent cannot have non-private constructor |
-| UL2001  | Union    | Error    | Union type can only have one non-generated part  |
-| UL2002  | Union    | Error    | Union member must be partial                     |
-| UL2003  | Union    | Error    | Union member cannot be generic                   |
-| UL2004  | Union    | Error    | Union member cannot have base type               |
-| UL2005  | Union    | Error    | Union type member must be a record and partial   |
-| UL1006  | Union    | Error    | Union type member must be public                 |
+| UL1006  | Union    | Error    | Union type can only have one non-generated part  |
+| UL2001  | Union    | Error    | Union member must be partial                     |
+| UL2002  | Union    | Error    | Union member cannot be generic                   |
+| UL2003  | Union    | Error    | Union member cannot have base type               |
+| UL2004  | Union    | Error    | Union type member must be a record and partial   |
+| UL2005  | Union    | Error    | Union type member must be public                 |
