@@ -139,7 +139,7 @@ public sealed class UnionGenerationSyntaxAnalyzer : DiagnosticAnalyzer
 	public static readonly DiagnosticDescriptor UL2005 = new(
 		id: nameof(UL2005),
 		title: "Union type member must be public",
-		messageFormat: "'{0}' is a union member and must be public",
+		messageFormat: "'{0}' contains a non-public access modifier keyword, union members must be public",
 		category: DiagnosticCategory.Union,
 		defaultSeverity: DiagnosticSeverity.Error,
 		isEnabledByDefault: true,
