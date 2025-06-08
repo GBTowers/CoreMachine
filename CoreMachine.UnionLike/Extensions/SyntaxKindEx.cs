@@ -12,6 +12,11 @@ public static class SyntaxKindEx
 		or SyntaxKind.ProtectedKeyword
 		or SyntaxKind.InternalKeyword
 		or SyntaxKind.FileKeyword;
+	
+	public static bool HasNonInterfaceBaseType(this BaseTypeDeclarationSyntax type, SemanticModel semanticModel)
+		=> type.BaseList?.Types is { Count: > 0 } baseList
+		&& semanticModel.GetSymbolInfo(baseList.First().Type).Symbol is not ITypeSymbol { TypeKind: TypeKind.Interface };
+
 
 	public static bool IsNonPublic(this BaseTypeDeclarationSyntax type) => type.Modifiers.Any(IsNonPublicAccessibility);
 

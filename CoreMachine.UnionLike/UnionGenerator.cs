@@ -102,13 +102,11 @@ public sealed class UnionGenerator : IIncrementalGenerator
 		.FirstOrDefault(attribute => attribute.AttributeClass?.Name == nameof(UnionAttribute))
 		?.NamedArguments.FirstOrDefault(x => x.Key == nameof(UnionAttribute.GenerateAsyncExtensions))
 		.Value.Value as bool? is true;
-
-		if (GetUnionTargetMembers(context, candidate) is not EquatableArray<UnionTargetMember> members) return null;
-
+		
 		return new UnionTarget(
 			Namespace: context.TargetSymbol.ContainingNamespace.ToDisplayString(),
 			Name: context.TargetSymbol.Name,
-			Members: members,
+			Members: GetUnionTargetMembers(context, candidate),
 			TypeParameters: ExtractTypeParameters(candidate),
 			GenerateAsyncExtensions: generateAsyncExtensions,
 			UsingDirectives: ExtractUsings(context.TargetNode),
@@ -116,32 +114,33 @@ public sealed class UnionGenerator : IIncrementalGenerator
 		);
 	}
 
-	private static EquatableArray<UnionTargetMember>? GetUnionTargetMembers(
+	private static EquatableArray<UnionTargetMember> GetUnionTargetMembers(
 		GeneratorAttributeSyntaxContext context,
 		RecordDeclarationSyntax candidate
 	)
 	{
-		List<UnionTargetMember> candidateMembers = [];
+		List<UnionTargetMember> members = [];
 
 		foreach (MemberDeclarationSyntax memberCandidate in candidate.Members)
 		{
 			// Union type can only have record members
-			if (memberCandidate is not TypeDeclarationSyntax member) continue;
-			if (member.Kind() is not SyntaxKind.RecordDeclaration) return null;
-
-
+			if (memberCandidate is not RecordDeclarationSyntax member) continue;
+			
 			// Union type can only have public members
-			if (member.IsNonPublic()) return null;
+			if (member.IsNonPublic()) continue;
 
 			// Union type cannot have members with type parameters
-			if (member.TypeParameterList?.Parameters.Count > 0) return null;
+			if (member.TypeParameterList?.Parameters.Count > 0) continue;
 
+			// Union type cannot have non interface base
+			if (member.HasNonInterfaceBaseType(context.SemanticModel)) continue;
+			
 			// Can only generate code for partial members
 			if (!member.Modifiers.Any(SyntaxKind.PartialKeyword)) continue;
 
 			RecordConstructor? constructor = GetMemberDefaultConstructor(member);
 
-			candidateMembers.Add(
+			members.Add(
 				new UnionTargetMember(
 					Name: member.Identifier.Text,
 					ParentName: context.TargetNode.ToFullString(),
@@ -150,7 +149,7 @@ public sealed class UnionGenerator : IIncrementalGenerator
 			);
 		}
 
-		return candidateMembers.ToImmutableArray();
+		return members.ToImmutableArray();
 	}
 
 	private static RecordConstructor? GetMemberDefaultConstructor(TypeDeclarationSyntax member)

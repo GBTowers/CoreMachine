@@ -13,5 +13,5 @@
 | UL2001  | Union    | Error    | Union member must be partial                     |
 | UL2002  | Union    | Error    | Union member cannot be generic                   |
 | UL2003  | Union    | Error    | Union member cannot have base type               |
-| UL2004  | Union    | Error    | Union type member must be a record and partial   |
+| UL2004  | Union    | Info     | Union type member must be a record and partial   |
 | UL2005  | Union    | Error    | Union type member must be public                 |

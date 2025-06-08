@@ -129,9 +129,9 @@ public sealed class UnionGenerationSyntaxAnalyzer : DiagnosticAnalyzer
 	public static readonly DiagnosticDescriptor UL2004 = new(
 		id: nameof(UL2004),
 		title: "Union type member must be a record and partial",
-		messageFormat: "'{0}' Is a type member inside a union and must be a partial record",
+		messageFormat: "'{0}' Is not a partial record and will not be considered as part of the union",
 		category: DiagnosticCategory.Union,
-		defaultSeverity: DiagnosticSeverity.Error,
+		defaultSeverity: DiagnosticSeverity.Info,
 		isEnabledByDefault: true,
 		description: "Unions can only have union members as type members."
 	);
