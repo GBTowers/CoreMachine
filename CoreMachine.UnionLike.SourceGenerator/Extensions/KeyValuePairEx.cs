@@ -1,6 +1,6 @@
-using CoreMachine.UnionLike.Model;
+using CoreMachine.UnionLike.SourceGenerator.Model;
 
-namespace CoreMachine.UnionLike.Extensions;
+namespace CoreMachine.UnionLike.SourceGenerator.Extensions;
 
 public static class KeyValuePairEx
 {

@@ -11,14 +11,14 @@ public partial class Examples
 	[Union]
 	public partial record Result<T, TE>
 	{
-    partial record Ok;
-		partial record Err;	
+		partial record Ok;
+		partial record Err;
 	}
-	
+
 	[Union]
 	public partial record Hello
 	{
-    partial record Hola;
+		partial record Hola;
 		partial record Hai;
 	}
 }

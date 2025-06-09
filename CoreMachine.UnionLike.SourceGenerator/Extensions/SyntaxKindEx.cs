@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace CoreMachine.UnionLike.Extensions;
+namespace CoreMachine.UnionLike.SourceGenerator.Extensions;
 
 public static class SyntaxKindEx
 {
@@ -25,20 +25,4 @@ public static class SyntaxKindEx
 		or SyntaxKind.InternalKeyword
 		or SyntaxKind.ProtectedKeyword
 		or SyntaxKind.FileKeyword;
-
-	public static SyntaxTokenList RearrangeKeywords(this SyntaxTokenList source)
-		=> new(source.OrderByDescending(token => token.Kind().IsAccessModifier()));
-
-	public static SyntaxTokenList WithSealedKeyword(this SyntaxTokenList source)
-		=> source.Any(SyntaxKind.SealedKeyword)
-			? source
-			: source.Insert(
-				index: Math.Max(val1: source.IndexOf(SyntaxKind.PartialKeyword) - 1, val2: 0),
-				token: SyntaxFactory.Token(SyntaxKind.SealedKeyword)
-			);
-
-	public static SyntaxTokenList WithPublicKeyword(this SyntaxTokenList source)
-		=> source.Any(SyntaxKind.PublicKeyword)
-			? source
-			: source.Insert(index: 0, token: SyntaxFactory.Token(SyntaxKind.PublicKeyword));
 }

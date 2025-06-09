@@ -1,6 +1,6 @@
-using CoreMachine.UnionLike.Data;
+using CoreMachine.UnionLike.SourceGenerator.Data;
 
-namespace CoreMachine.UnionLike.Extensions;
+namespace CoreMachine.UnionLike.SourceGenerator.Extensions;
 
 public static class StringEx
 {

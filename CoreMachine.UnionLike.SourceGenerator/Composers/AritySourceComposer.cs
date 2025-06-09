@@ -1,11 +1,11 @@
 using System.CodeDom.Compiler;
-using CoreMachine.UnionLike.Extensions;
-using CoreMachine.UnionLike.Model;
+using CoreMachine.UnionLike.SourceGenerator.Extensions;
+using CoreMachine.UnionLike.SourceGenerator.Model;
 using Microsoft.CodeAnalysis;
 
 // ReSharper disable ArgumentsStyleLiteral
 
-namespace CoreMachine.UnionLike.Composers;
+namespace CoreMachine.UnionLike.SourceGenerator.Composers;
 
 public static class AritySourceComposer
 {
@@ -22,7 +22,7 @@ public static class AritySourceComposer
 		writer.WriteLine("namespace CoreMachine.UnionLike;");
 		writer.WriteLine();
 
-		writer.WriteLine("[global::System.CodeDom.Compiler.GeneratedCodeAttribute(\"CoreMachine.UnionLike\", \"1.0.0\")]");
+		writer.WriteLine("[global::System.CodeDom.Compiler.GeneratedCodeAttribute(\"CoreMachine.UnionLike.SourceGenerator\", \"1.0.0\")]");
 		writer.WriteLine($"public abstract record {fakeUnion.Declaration} : Union");
 		writer.Indent++;
 		writer.WriteLine(fakeUnion.WhereClauses);

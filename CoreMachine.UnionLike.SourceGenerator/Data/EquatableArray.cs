@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
-namespace CoreMachine.UnionLike.Data;
+namespace CoreMachine.UnionLike.SourceGenerator.Data;
 
 /// <summary>
 ///   An imutable, equatable array. This is equivalent to <see cref="ImmutableArray{T}" /> but with value equality support.

@@ -28,7 +28,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\CoreMachine.UnionLike.Attributes\CoreMachine.UnionLike.Attributes.csproj" />
-		<ProjectReference Include="..\CoreMachine.UnionLike\CoreMachine.UnionLike.csproj" />
+		<ProjectReference Include="..\CoreMachine.UnionLike.SourceGenerator\CoreMachine.UnionLike.SourceGenerator.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,7 +1,7 @@
-using CoreMachine.UnionLike.Extensions;
-using CoreMachine.UnionLike.Data;
+using CoreMachine.UnionLike.SourceGenerator.Extensions;
+using CoreMachine.UnionLike.SourceGenerator.Data;
 
-namespace CoreMachine.UnionLike.Model;
+namespace CoreMachine.UnionLike.SourceGenerator.Model;
 
 public sealed record UnionTarget(
 	string Namespace,

@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
-namespace CoreMachine.UnionLike.Diagnosis;
+namespace CoreMachine.UnionLike.SourceGenerator.Diagnosis;
 
 internal sealed record DiagnosticInfo
 {

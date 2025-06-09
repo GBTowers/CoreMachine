@@ -4,7 +4,7 @@ using CoreMachine.UnionLike.Attributes;
 namespace CoreMachine.UnionLike.Integration;
 
 [Union]
-public abstract partial record Notification
+public partial record Notification
 {
 	partial record Bye(Color Color);
 }

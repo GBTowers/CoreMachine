@@ -1,5 +1,5 @@
 using CoreMachine.UnionLike.Attributes;
-using CoreMachine.UnionLike;
+using CoreMachine.UnionLike.SourceGenerator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 

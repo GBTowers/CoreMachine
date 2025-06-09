@@ -1,4 +1,4 @@
-namespace CoreMachine.UnionLike.Data;
+namespace CoreMachine.UnionLike.SourceGenerator.Data;
 
 internal sealed class NotNullWhenAttribute : Attribute
 {

@@ -1,10 +1,10 @@
 using System.CodeDom.Compiler;
 using System.Text;
-using CoreMachine.UnionLike.Extensions;
-using CoreMachine.UnionLike.Model;
+using CoreMachine.UnionLike.SourceGenerator.Extensions;
+using CoreMachine.UnionLike.SourceGenerator.Model;
 using Microsoft.CodeAnalysis;
 
-namespace CoreMachine.UnionLike.Composers;
+namespace CoreMachine.UnionLike.SourceGenerator.Composers;
 
 public static class UnionSourceComposer
 {

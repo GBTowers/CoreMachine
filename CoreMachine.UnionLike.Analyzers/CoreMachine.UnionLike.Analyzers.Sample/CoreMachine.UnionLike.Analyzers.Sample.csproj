@@ -8,7 +8,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\CoreMachine.UnionLike.Attributes\CoreMachine.UnionLike.Attributes.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
 		
-		<ProjectReference Include="..\..\CoreMachine.UnionLike\CoreMachine.UnionLike.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<ProjectReference Include="..\..\CoreMachine.UnionLike.SourceGenerator\CoreMachine.UnionLike.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 	</ItemGroup>
 
 	<ItemGroup>

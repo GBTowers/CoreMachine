@@ -2,17 +2,17 @@ using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using CoreMachine.UnionLike.Attributes;
-using CoreMachine.UnionLike.Extensions;
-using CoreMachine.UnionLike.Composers;
-using CoreMachine.UnionLike.Data;
-using CoreMachine.UnionLike.Model;
+using CoreMachine.UnionLike.SourceGenerator.Extensions;
+using CoreMachine.UnionLike.SourceGenerator.Composers;
+using CoreMachine.UnionLike.SourceGenerator.Data;
+using CoreMachine.UnionLike.SourceGenerator.Model;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 
-namespace CoreMachine.UnionLike;
+namespace CoreMachine.UnionLike.SourceGenerator;
 
 [Generator]
 public sealed class UnionGenerator : IIncrementalGenerator

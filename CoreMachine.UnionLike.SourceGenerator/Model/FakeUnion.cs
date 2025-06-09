@@ -1,6 +1,6 @@
-using CoreMachine.UnionLike.Extensions;
+using CoreMachine.UnionLike.SourceGenerator.Extensions;
 
-namespace CoreMachine.UnionLike.Model;
+namespace CoreMachine.UnionLike.SourceGenerator.Model;
 
 public record FakeUnion(int Arity)
 {

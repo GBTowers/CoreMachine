@@ -1,4 +1,4 @@
-namespace CoreMachine.UnionLike.Extensions;
+namespace CoreMachine.UnionLike.SourceGenerator.Extensions;
 
 public static class EnumE
 {

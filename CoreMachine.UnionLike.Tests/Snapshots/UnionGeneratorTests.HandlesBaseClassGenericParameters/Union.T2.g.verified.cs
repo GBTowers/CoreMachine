@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CoreMachine.UnionLike;
 
-[global::System.CodeDom.Compiler.GeneratedCodeAttribute("CoreMachine.UnionLike", "1.0.0")]
+[global::System.CodeDom.Compiler.GeneratedCodeAttribute("CoreMachine.UnionLike.SourceGenerator", "1.0.0")]
 public abstract record Union<T, T1, T2> : Union
 	where T : Union<T, T1, T2> where T1 : T where T2 : T
 {

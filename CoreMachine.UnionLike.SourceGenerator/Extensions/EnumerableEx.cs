@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 
-namespace CoreMachine.UnionLike.Extensions;
+namespace CoreMachine.UnionLike.SourceGenerator.Extensions;
 
 [Serializable, ContractClass(typeof(EnumerableEx))]
 public static class EnumerableEx
