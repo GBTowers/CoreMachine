@@ -15,7 +15,7 @@ namespace CoreMachine.Result;
 ///  {
 /// 		return num + 5; // equals 10
 ///  }
-///  var myNum = num; // the variable num is not assigned here, this will not compilee
+///  var myNum = num; // the variable num is not assigned here, this will not compile
 ///  </code>
 /// </example>
 /// <typeparam name="T">the type for the value contained in the <see cref="IOk{T}" /></typeparam>
